@@ -1,0 +1,64 @@
+version: 2
+updates:
+  # Rust (Tauri backend)
+  - package-ecosystem: "cargo"
+    directory: "/src-tauri"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "rust"
+      - "tauri"
+    groups:
+      rust-cryptography:
+        patterns:
+          - "pqcrypto-*"
+          - "ed25519-*"
+          - "sha2"
+          - "sha3"
+          - "blake3"
+      tauri:
+        patterns:
+          - "tauri"
+          - "tauri-*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-prerelease"]
+
+  # NPM (frontend)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "javascript"
+      - "frontend"
+    groups:
+      vue:
+        patterns:
+          - "vue"
+          - "@vue/*"
+          - "vue-*"
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "jest"
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
