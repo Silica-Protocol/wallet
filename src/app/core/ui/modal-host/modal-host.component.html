@@ -1,0 +1,66 @@
+@if (modal(); as modalState) {
+  <div class="modal-overlay" role="presentation">
+    <div
+      class="modal-window"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="'modal-title-' + modalState.id"
+    >
+      <header class="modal-header">
+        <h2 class="modal-title" [id]="'modal-title-' + modalState.id">{{ modalState.title }}</h2>
+        <button type="button" class="modal-close" (click)="onClose()" aria-label="Close dialog">✕</button>
+      </header>
+
+      <div class="modal-body">
+        @if (modalState.description) {
+          <p class="modal-description">{{ modalState.description }}</p>
+        }
+
+        @if (modalState.variant === 'mnemonic' && modalState.mnemonic) {
+          <div class="mnemonic-section">
+            <code class="mnemonic-value">{{ modalState.mnemonic }}</code>
+            <button type="button" class="secondary" (click)="onCopyMnemonic(modalState.mnemonic)">
+              Copy to Clipboard
+            </button>
+            @if (copyFeedback()) {
+              <div class="copy-feedback">{{ copyFeedback() }}</div>
+            }
+          </div>
+        }
+
+        @if (modalState.requiresPassword) {
+          <label class="modal-field">
+            <span>Password</span>
+            <input
+              type="password"
+              [formControl]="passwordControl"
+              autocomplete="current-password"
+              (blur)="passwordControl.markAsTouched()"
+            />
+          </label>
+          @if (passwordControl.invalid && passwordControl.touched) {
+            <div class="field-error">Password must be at least {{ modalState.passwordMinLength ?? 8 }} characters.</div>
+          }
+        }
+
+        @if (modalState.errorMessage) {
+          <div class="modal-error">{{ modalState.errorMessage }}</div>
+        }
+      </div>
+
+      <footer class="modal-footer">
+        @if (modalState.cancelLabel || modalState.onCancel) {
+          <button type="button" class="link" (click)="onCancel()" [disabled]="modalState.resolving">
+            {{ cancelLabel }}
+          </button>
+        }
+        <button type="button" class="primary" (click)="onConfirm()" [disabled]="!canConfirm">
+          @if (modalState.resolving) {
+            <span class="loading-indicator"></span>
+          }
+          <span>{{ confirmLabel }}</span>
+        </button>
+      </footer>
+    </div>
+  </div>
+}

@@ -1,0 +1,289 @@
+<div class="app-container">
+
+  @if (toastMessage) {
+  <div class="toast" [class.toast-success]="toastVariant === 'success'" [class.toast-error]="toastVariant === 'error'">
+    {{ toastMessage }}
+  </div>
+  }
+
+  @if (error()) {
+  <div class="error-banner">
+    <span>{{ error() }}</span>
+    <button type="button" class="error-dismiss" (click)="clearError()">Dismiss</button>
+  </div>
+  }
+
+   <header class="app-header">
+     <div class="header-top">
+       <div class="header-brand" aria-label="Chert Wallet">
+         <img class="header-icon" src="assets/chert-icon.svg" alt="Chert" />
+         <h1>{{ title }}</h1>
+       </div>
+       <app-theme-toggle></app-theme-toggle>
+     </div>
+
+     @if (hasWallet()) {
+     <nav class="app-navigation">
+       <a routerLink="/wallet" routerLinkActive="active" class="nav-link">
+         <span class="nav-icon">💼</span>
+         Wallet
+       </a>
+       <a routerLink="/transactions" routerLinkActive="active" class="nav-link">
+         <span class="nav-icon">📊</span>
+         Transactions
+       </a>
+       <a routerLink="/staking" routerLinkActive="active" class="nav-link">
+         <span class="nav-icon">💎</span>
+         Staking
+       </a>
+       <a routerLink="/governance" routerLinkActive="active" class="nav-link">
+         <span class="nav-icon">🗳️</span>
+         Governance
+       </a>
+     </nav>
+     <div class="header-actions">
+       <button type="button" class="secondary" (click)="handleExportWallet()" [disabled]="isLoading()">
+         Export Wallet
+       </button>
+       <button type="button" class="secondary" (click)="handleChangePassword()" [disabled]="isLoading()">
+         Change Password
+       </button>
+       <button type="button" class="link" (click)="lockWallet()" [disabled]="isLoading()">
+         Lock Wallet
+       </button>
+     </div>
+     }
+   </header>
+
+  <main class="app-main">
+    <!-- Fast loading: Show spinner while initializing if wallet data exists in localStorage -->
+    @if (initializing) {
+    <div class="init-loading">
+      <div class="init-spinner">
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+        <div class="spinner-ring"></div>
+      </div>
+      <p class="init-text">Loading wallet...</p>
+    </div>
+    } @else if (hasWallet()) {
+    <!-- Wallet unlocked - show main app -->
+    <router-outlet></router-outlet>
+    } @else if (isWalletLocked()) {
+    <!-- Wallet exists but locked - show unlock -->
+    <div class="wallet-setup wallet-setup--unlock">
+      <div class="welcome-card welcome-card--unlock animate-fade-in-up">
+        <div class="welcome-header welcome-header--unlock">
+          <div class="logo-animation logo-animation--compact" aria-hidden="true">
+            <img src="assets/logo.svg" alt="" class="logo-svg" />
+          </div>
+          <div class="welcome-text">
+            <h2>Welcome Back</h2>
+          </div>
+        </div>
+
+        <app-unlock-wallet
+          class="unlock-section animate-fade-in"
+          [walletInfo]="walletInfo!"
+          (walletInfoChange)="onWalletInfoChange($event)"
+          (unlocked)="onUnlockSuccess()"
+          (failed)="onUnlockFailure($event)"
+          (error)="onUnlockError($event)"
+        ></app-unlock-wallet>
+      </div>
+    </div>
+    } @else {
+    <!-- No wallet - show create/import -->
+    <div class="wallet-setup wallet-setup--setup">
+      <div class="setup-brand-bg" aria-hidden="true">
+        <img src="assets/logo-animated-lite.svg" alt="" />
+      </div>
+      <div class="welcome-card welcome-card--setup animate-fade-in-up">
+        <div class="setup-shell">
+          <div class="setup-panel">
+            <div class="welcome-header">
+              <div class="logo-animation" aria-hidden="true">
+                <div class="logo-pulse"></div>
+              </div>
+              <div>
+                <h2>Welcome to Chert Wallet</h2>
+              </div>
+            </div>
+
+            <div class="setup-toggle" role="tablist" aria-label="Wallet setup mode">
+              <button
+                type="button"
+                role="tab"
+                class="setup-toggle-btn"
+                [class.active]="setupMode === 'create'"
+                [attr.aria-selected]="setupMode === 'create'"
+                (click)="setSetupMode('create')">
+                Create
+              </button>
+              <button
+                type="button"
+                role="tab"
+                class="setup-toggle-btn"
+                [class.active]="setupMode === 'import'"
+                [attr.aria-selected]="setupMode === 'import'"
+                (click)="setSetupMode('import')">
+                Import
+              </button>
+            </div>
+
+            <div class="form-grid single">
+              @if (setupMode === 'create') {
+              <section class="form-section animate-on-scroll">
+                <h3>Create Wallet</h3>
+                <p class="muted">Generate a new secure wallet with a 24-word mnemonic. Password must be at least 8 characters.</p>
+                <form [formGroup]="createForm" (ngSubmit)="submitCreateWallet()">
+                  <label>
+                    <span>Wallet Name</span>
+                    <input type="text" formControlName="walletName" autocomplete="off"
+                      [class.invalid]="createForm.controls['walletName'].invalid && createForm.controls['walletName'].touched" />
+                  </label>
+                  <label>
+                    <span>Password</span>
+                    <input type="password" formControlName="password" autocomplete="new-password"
+                      [class.invalid]="createForm.controls['password'].invalid && createForm.controls['password'].touched" />
+                  </label>
+                  <label>
+                    <span>Confirm Password</span>
+                    <input type="password" formControlName="confirmPassword" autocomplete="new-password"
+                      [class.invalid]="createForm.controls['confirmPassword'].invalid && createForm.controls['confirmPassword'].touched" />
+                  </label>
+                  <button class="primary" type="submit" [disabled]="loading">Create Wallet</button>
+                </form>
+              </section>
+              } @else {
+              <section class="form-section animate-on-scroll">
+                <h3>Import Wallet</h3>
+                <p class="muted">Restore an existing wallet using your mnemonic phrase.</p>
+                <form [formGroup]="importForm" (ngSubmit)="submitImportWallet()">
+                  <label>
+                    <span>Wallet Name</span>
+                    <input type="text" formControlName="walletName" autocomplete="off"
+                      [class.invalid]="importForm.controls['walletName'].invalid && importForm.controls['walletName'].touched" />
+                  </label>
+                  <label>
+                    <span>Password</span>
+                    <input type="password" formControlName="password" autocomplete="new-password"
+                      [class.invalid]="importForm.controls['password'].invalid && importForm.controls['password'].touched" />
+                  </label>
+                  <label>
+                    <span>Mnemonic Phrase</span>
+                    <textarea formControlName="mnemonic" rows="3" placeholder="word1 word2 …"
+                      [class.invalid]="importForm.controls['mnemonic'].invalid && importForm.controls['mnemonic'].touched"></textarea>
+                  </label>
+                  <button class="primary" type="submit" [disabled]="loading">Import Wallet</button>
+                </form>
+              </section>
+              }
+            </div>
+          </div>
+
+          <aside class="setup-details" aria-label="Chert wallet highlights">
+            <div class="feature-grid feature-grid--setup">
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">🔐</span>
+                <h3>Post-Quantum Secure</h3>
+                <p>Harness Dilithium signatures and Kyber key exchange for quantum-resistant security.</p>
+              </div>
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">⚡</span>
+                <h3>Instant transactions (sub 1s)</h3>
+                <p>Optimised for rapid confirmation and predictable execution.</p>
+              </div>
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">🧪</span>
+                <h3>Proof of Useful Work</h3>
+                <p>Earn rewards by contributing meaningful scientific computation.</p>
+              </div>
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">🕶️</span>
+                <h3>Privacy layer</h3>
+                <p>Build with optional privacy primitives designed for modern threats.</p>
+              </div>
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">💱</span>
+                <h3>DeFi ready</h3>
+                <p>Open to swaps, staking, and on-chain apps as the ecosystem grows.</p>
+              </div>
+              <div class="feature-card animate-on-scroll">
+                <span class="feature-icon">📈</span>
+                <h3>Earn to hold</h3>
+                <p>Stake rewards accrue continuously while you keep custody of your keys.</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    }
+
+    <!-- Enhanced Tutorial Modal -->
+    @if (showTutorial) {
+    <div class="tutorial-overlay animate-fade-in" (click)="completeTutorial()" (keydown.enter)="completeTutorial()" (keydown.space)="completeTutorial()" tabindex="0">
+      <div class="tutorial-modal" (click)="$event.stopPropagation()" tabindex="0"
+        [style.background]="tutorialSteps[currentTutorialStep].background">
+        <button class="tutorial-close" (click)="completeTutorial()" (keydown.enter)="completeTutorial()" (keydown.space)="completeTutorial()">✕</button>
+
+        <div class="tutorial-content">
+          <div class="tutorial-icon">{{ tutorialSteps[currentTutorialStep].icon }}</div>
+          <h2>{{ tutorialSteps[currentTutorialStep].title }}</h2>
+          <p>{{ tutorialSteps[currentTutorialStep].description }}</p>
+        </div>
+
+        <div class="tutorial-navigation">
+          <button class="tutorial-nav-btn" (click)="previousTutorialStep()" (keydown.enter)="previousTutorialStep()" (keydown.space)="previousTutorialStep()" [disabled]="currentTutorialStep === 0">
+            ← Previous
+          </button>
+
+          <div class="tutorial-dots">
+            @for (step of tutorialSteps; track $index) {
+            <button class="tutorial-dot" [class.active]="$index === currentTutorialStep"
+              (click)="currentTutorialStep = $index" (keydown.enter)="currentTutorialStep = $index" (keydown.space)="currentTutorialStep = $index"
+              [attr.aria-label]="'Go to step ' + ($index + 1)">
+            </button>
+            }
+          </div>
+
+          <button class="tutorial-nav-btn" (click)="nextTutorialStep()">
+            {{ currentTutorialStep === tutorialSteps.length - 1 ? 'Finish' : 'Next →' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Enhanced Error Message -->
+    @if (errorMessage; as errorMsg) {
+    <div class="error-message animate-slide-in-right">
+      <div class="error-icon">⚠️</div>
+      <div class="error-content">
+        <p>{{ errorMsg }}</p>
+      </div>
+      <button class="error-dismiss" (click)="clearError()" aria-label="Dismiss error">✕</button>
+    </div>
+    }
+
+    <!-- Enhanced Loading Overlay -->
+    @if (loading) {
+    <div class="loading-overlay animate-fade-in">
+      <div class="loading-container">
+        <div class="loading-spinner-advanced">
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+          <div class="spinner-ring"></div>
+        </div>
+        <p class="loading-text">Crafting your experience...</p>
+        <div class="loading-progress">
+          <div class="loading-bar"></div>
+        </div>
+      </div>
+    </div>
+    }
+  </main>
+</div>
+<app-modal-host></app-modal-host>

@@ -1,0 +1,129 @@
+.governance-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+
+  .governance-header {
+    margin-bottom: var(--space-xl);
+
+    .header-content {
+      h2 {
+        color: var(--color-snow);
+        margin-bottom: var(--space-sm);
+        font-size: var(--text-3xl);
+        font-weight: 300;
+        font-family: var(--font-display);
+      }
+
+      p {
+        color: var(--color-silver);
+        margin-bottom: var(--space-md);
+        font-size: var(--text-lg);
+      }
+    }
+
+    .governance-nav {
+      display: flex;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+
+        .nav-btn {
+          background: rgba(255, 255, 255, 0.05);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          border-radius: var(--radius-lg);
+          padding: var(--space-md) var(--space-lg);
+          cursor: pointer;
+          font-size: var(--text-base);
+          color: var(--color-silver);
+          transition: transform var(--transition-normal), background-color var(--transition-normal), border-color var(--transition-normal), color var(--transition-normal), opacity var(--transition-normal);
+          font-weight: 500;
+
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+          color: var(--color-pearl);
+        }
+
+        &.active {
+          background: var(--gradient-chert);
+          color: var(--color-void);
+          border-color: transparent;
+          box-shadow: var(--shadow-chert);
+        }
+
+        &.create-btn {
+          background: var(--gradient-chert);
+          color: var(--color-void);
+          border-color: transparent;
+
+          &:hover {
+            box-shadow: var(--shadow-chert);
+            transform: translateY(-2px);
+          }
+
+          &.active {
+            background: var(--gradient-chert);
+          }
+        }
+      }
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      margin-top: var(--space-md);
+      font-size: var(--text-sm);
+
+      .breadcrumb-link {
+        background: none;
+        border: none;
+        color: var(--color-chert);
+        cursor: pointer;
+        text-decoration: underline;
+        padding: 0;
+        font-size: inherit;
+        transition: color var(--transition-fast);
+
+        &:hover {
+          color: var(--color-chert-bright);
+        }
+      }
+
+      .breadcrumb-separator {
+        margin: 0 var(--space-sm);
+        color: var(--color-ash);
+      }
+
+      .breadcrumb-current {
+        color: var(--color-pearl);
+        font-weight: 500;
+      }
+    }
+  }
+
+  .governance-content {
+    // Sub-components will handle their own styling
+  }
+}
+
+@media (max-width: 768px) {
+  .governance-view {
+    padding: var(--space-md);
+
+    .governance-header {
+      .header-content h2 {
+        font-size: var(--text-2xl);
+      }
+
+      .governance-nav {
+        flex-direction: column;
+
+        .nav-btn {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,740 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
+  <defs>
+    <!-- Gradients -->
+    <!-- Main C-ring gradient (cyan to teal) -->
+    <linearGradient id="cRingMain" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="35%" stop-color="#22d3ee"/>
+      <stop offset="65%" stop-color="#14b8a6"/>
+      <stop offset="100%" stop-color="#0d9488"/>
+    </linearGradient>
+
+    <!-- Secondary ring gradient (darker teal/blue) -->
+    <linearGradient id="cRingSecondary" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0891b2" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#0e7490" stop-opacity="0.3"/>
+    </linearGradient>
+
+    <radialGradient id="bgGradient" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#0a1628"/>
+      <stop offset="50%" stop-color="#061018"/>
+      <stop offset="100%" stop-color="#020408"/>
+    </radialGradient>
+    
+    <radialGradient id="glowCenter" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00ffff" stop-opacity="0.3"/>
+      <stop offset="50%" stop-color="#0088aa" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#004455" stop-opacity="0"/>
+    </radialGradient>
+    
+    <radialGradient id="crystalGradient" cx="30%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#7fff7f"/>
+      <stop offset="30%" stop-color="#00ff88"/>
+      <stop offset="60%" stop-color="#00cc66"/>
+      <stop offset="100%" stop-color="#006633"/>
+    </radialGradient>
+    
+    <radialGradient id="crystalHighlight" cx="40%" cy="20%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="#aaffcc" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#00ff88" stop-opacity="0"/>
+    </radialGradient>
+    
+    <linearGradient id="crystalFacet1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#88ffaa"/>
+      <stop offset="50%" stop-color="#00dd77"/>
+      <stop offset="100%" stop-color="#00aa55"/>
+    </linearGradient>
+    
+    <linearGradient id="crystalFacet2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00ff99"/>
+      <stop offset="50%" stop-color="#00cc77"/>
+      <stop offset="100%" stop-color="#008855"/>
+    </linearGradient>
+    
+    <linearGradient id="crystalFacet3" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#66ffbb"/>
+      <stop offset="100%" stop-color="#009955"/>
+    </linearGradient>
+    
+    <linearGradient id="crystalDark" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#004422"/>
+      <stop offset="100%" stop-color="#007744"/>
+    </linearGradient>
+    
+    <linearGradient id="ringGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00cccc"/>
+      <stop offset="50%" stop-color="#0088aa"/>
+      <stop offset="100%" stop-color="#005566"/>
+    </linearGradient>
+    
+    <linearGradient id="ringGradient2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00aacc"/>
+      <stop offset="100%" stop-color="#004466"/>
+    </linearGradient>
+    
+    <linearGradient id="arcGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00ffff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#00ffff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#00ffff" stop-opacity="0"/>
+    </linearGradient>
+    
+    <!-- Filters -->
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="8" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="strongGlow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="15" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="crystalGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="nodeGlow" x="-200%" y="-200%" width="500%" height="500%">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <!-- Clip paths -->
+    <clipPath id="viewportClip">
+      <rect x="0" y="0" width="800" height="800"/>
+    </clipPath>
+
+    <!-- Filter for soft mask edge -->
+    <filter id="maskBlur" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="12" />
+    </filter>
+
+    <!-- Main C-shape mask (cuts the gap on right side) with soft edge -->
+    <mask id="cMask">
+      <rect x="0" y="0" width="800" height="800" fill="white"/>
+      <!-- Gap on the right side of C with blur for soft edge -->
+      <g filter="url(#maskBlur)">
+        <path d="M 380 284 
+                 Q 544 300, 380 516 
+                 L 800 516 
+                 L 800 284 Z" fill="black"/>
+      </g>
+    </mask>
+  </defs>
+  
+  <!-- Background -->
+  
+  <!-- Central glow effect -->
+  <ellipse cx="400" cy="400" rx="300" ry="300" fill="url(#glowCenter)" opacity="0.8">
+    <animate attributeName="opacity" values="0.6;0.9;0.6" dur="4s" repeatCount="indefinite"/>
+  </ellipse>
+  
+  <g mask="url(#cMask)">
+    
+    <!-- RING 1: Outermost - slow rotation, thick segments -->
+    <g filter="url(#softGlow)">
+      <circle cx="400" cy="400" r="210" fill="none" stroke="url(#cRingMain)" 
+              stroke-width="8" stroke-dasharray="40 20 8 20 60 30" opacity="0.7">
+        <animateTransform attributeName="transform" type="rotate" 
+                          from="0 400 400" to="360 400 400" dur="90s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- RING 2: Dense data ring -->
+    <g filter="url(#glow)">
+      <circle cx="400" cy="400" r="198" fill="none" stroke="#22d3ee" 
+              stroke-width="3" stroke-dasharray="4 8 20 8 4 16 40 12" opacity="0.8">
+        <animateTransform attributeName="transform" type="rotate" 
+                          from="360 400 400" to="0 400 400" dur="45s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- RING 3: Thin accent ring -->
+    <circle cx="400" cy="400" r="188" fill="none" stroke="#14b8a6" 
+            stroke-width="1.5" stroke-dasharray="2 6 2 12" opacity="0.6">
+      <animateTransform attributeName="transform" type="rotate" 
+                        from="0 400 400" to="360 400 400" dur="30s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- RING 4: Medium complexity ring -->
+    <g filter="url(#softGlow)">
+      <circle cx="400" cy="400" r="175" fill="none" stroke="url(#cRingSecondary)" 
+              stroke-width="6" stroke-dasharray="30 15 6 15 50 25" opacity="0.75">
+        <animateTransform attributeName="transform" type="rotate" 
+                          from="180 400 400" to="-180 400 400" dur="60s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- RING 5: Fine detail ring -->
+    <circle cx="400" cy="400" r="165" fill="none" stroke="#0891b2" 
+            stroke-width="2" stroke-dasharray="1 4 8 4 1 8 16 6" opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" 
+                        from="90 400 400" to="450 400 400" dur="35s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- RING 6: Inner accent -->
+    <g filter="url(#glow)">
+      <circle cx="400" cy="400" r="152" fill="none" stroke="#06b6d4" 
+              stroke-width="4" stroke-dasharray="20 10 4 10 35 15" opacity="0.65">
+        <animateTransform attributeName="transform" type="rotate" 
+                          from="270 400 400" to="-90 400 400" dur="50s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- RING 7: Innermost tech ring -->
+    <circle cx="400" cy="400" r="140" fill="none" stroke="#0e7490" 
+            stroke-width="2.5" stroke-dasharray="12 8 3 8 25 12" opacity="0.55">
+      <animateTransform attributeName="transform" type="rotate" 
+                        from="0 400 400" to="360 400 400" dur="40s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- Scattered HUD elements / data bits on the C structure -->
+    <g opacity="0.7" filter="url(#softGlow)">
+      <!-- Small rectangles (data blocks) - offset by +144 to center at 400 -->
+      <rect x="204" y="324" width="12" height="4" fill="#22d3ee" rx="1">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+      </rect>
+      <rect x="189" y="384" width="8" height="3" fill="#4ade80" rx="1">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="1.8s" repeatCount="indefinite" begin="0.3s"/>
+      </rect>
+      <rect x="214" y="444" width="15" height="4" fill="#22d3ee" rx="1">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="2.2s" repeatCount="indefinite" begin="0.6s"/>
+      </rect>
+      <rect x="244" y="524" width="10" height="3" fill="#06b6d4" rx="1">
+        <animate attributeName="opacity" values="0.3;0.9;0.3" dur="1.5s" repeatCount="indefinite" begin="0.9s"/>
+      </rect>
+      <rect x="324" y="564" width="18" height="4" fill="#14b8a6" rx="1">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="1.2s"/>
+      </rect>
+      <rect x="229" y="284" width="14" height="3" fill="#0ea5e9" rx="1">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.7s" repeatCount="indefinite" begin="0.4s"/>
+      </rect>
+      <rect x="304" y="219" width="10" height="4" fill="#22d3ee" rx="1">
+        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.1s" repeatCount="indefinite" begin="0.7s"/>
+      </rect>
+
+      <!-- Glowing dots (nodes) - offset by +144 -->
+      <circle cx="199" cy="354" r="3" fill="#67e8f9">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="2;4;2" dur="3s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="192" cy="424" r="2.5" fill="#4ade80">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <circle cx="234" cy="494" r="3.5" fill="#22d3ee">
+        <animate attributeName="opacity" values="0.3;0.9;0.3" dur="2s" repeatCount="indefinite" begin="0.8s"/>
+        <animate attributeName="r" values="2.5;4.5;2.5" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="284" cy="549" r="2.5" fill="#06b6d4">
+        <animate attributeName="opacity" values="0.4;1;0.4" dur="1.6s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <circle cx="219" cy="304" r="3" fill="#14b8a6">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.2s" repeatCount="indefinite" begin="0.3s"/>
+      </circle>
+      <circle cx="274" cy="239" r="2.5" fill="#22d3ee">
+        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="1.9s" repeatCount="indefinite" begin="0.6s"/>
+      </circle>
+
+      <!-- Connection lines - offset by +144 -->
+      <line x1="199" y1="354" x2="229" y2="324" stroke="#22d3ee" stroke-width="0.8" opacity="0.5">
+        <animate attributeName="opacity" values="0.2;0.7;0.2" dur="3s" repeatCount="indefinite"/>
+      </line>
+      <line x1="192" y1="424" x2="214" y2="444" stroke="#4ade80" stroke-width="0.8" opacity="0.4">
+        <animate attributeName="opacity" values="0.2;0.6;0.2" dur="2.5s" repeatCount="indefinite" begin="0.5s"/>
+      </line>
+      <line x1="234" y1="494" x2="244" y2="524" stroke="#06b6d4" stroke-width="0.8" opacity="0.5">
+        <animate attributeName="opacity" values="0.3;0.8;0.3" dur="2.8s" repeatCount="indefinite" begin="0.8s"/>
+      </line>
+    </g>
+
+    <!-- Bright spark points on the C - offset by +144 -->
+    <g filter="url(#strongGlow)">
+      <circle cx="196" cy="400" r="4" fill="#ffffff">
+        <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="229" cy="294" r="3.5" fill="#a5f3fc">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.5s" repeatCount="indefinite" begin="0.7s"/>
+        <animate attributeName="r" values="2.5;4.5;2.5" dur="2.5s" repeatCount="indefinite" begin="0.7s"/>
+      </circle>
+      <circle cx="229" cy="506" r="3.5" fill="#a5f3fc">
+        <animate attributeName="opacity" values="0.5;1;0.5" dur="2.3s" repeatCount="indefinite" begin="1.2s"/>
+        <animate attributeName="r" values="2.5;4.5;2.5" dur="2.3s" repeatCount="indefinite" begin="1.2s"/>
+      </circle>
+      <circle cx="324" cy="214" r="3" fill="#bbf7d0">
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="1.8s" repeatCount="indefinite" begin="0.4s"/>
+      </circle>
+      <circle cx="324" cy="586" r="3" fill="#bbf7d0">
+        <animate attributeName="opacity" values="0.4;0.9;0.4" dur="2s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Floating background nodes - outer layer -->
+  <g id="floatingNodesOuter" filter="url(#nodeGlow)">
+    <!-- Top area nodes -->
+    <circle cx="120" cy="80" r="2" fill="#00ccff" opacity="0.6">
+      <animate attributeName="cy" values="80;75;80" dur="5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.6;0.9;0.6" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="180" cy="120" r="1.5" fill="#00ffcc" opacity="0.5">
+      <animate attributeName="cy" values="120;115;120" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="250" cy="60" r="2.5" fill="#00ddff" opacity="0.7">
+      <animate attributeName="cy" values="60;55;60" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="320" cy="95" r="1.8" fill="#44ffdd" opacity="0.5">
+      <animate attributeName="cy" values="95;90;95" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="480" cy="70" r="2" fill="#00ccff" opacity="0.6">
+      <animate attributeName="cy" values="70;65;70" dur="5.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="550" cy="110" r="1.5" fill="#00ffaa" opacity="0.5">
+      <animate attributeName="cy" values="110;105;110" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="620" cy="55" r="2.2" fill="#00ddcc" opacity="0.6">
+      <animate attributeName="cy" values="55;50;55" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="90" r="1.8" fill="#00eeff" opacity="0.5">
+      <animate attributeName="cy" values="90;85;90" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Left side nodes -->
+    <circle cx="60" cy="200" r="2" fill="#00ccdd" opacity="0.6">
+      <animate attributeName="cx" values="60;55;60" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="100" cy="280" r="1.5" fill="#00ffbb" opacity="0.5">
+      <animate attributeName="cx" values="100;95;100" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="45" cy="350" r="2.2" fill="#00ddee" opacity="0.6">
+      <animate attributeName="cx" values="45;40;45" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="80" cy="420" r="1.8" fill="#00cccc" opacity="0.5">
+      <animate attributeName="cx" values="80;75;80" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="55" cy="500" r="2" fill="#00eedd" opacity="0.6">
+      <animate attributeName="cx" values="55;50;55" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="95" cy="580" r="1.5" fill="#00ffcc" opacity="0.5">
+      <animate attributeName="cx" values="95;90;95" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Right side nodes -->
+    <circle cx="740" cy="180" r="2" fill="#00ccee" opacity="0.6">
+      <animate attributeName="cx" values="740;745;740" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="700" cy="260" r="1.5" fill="#00ffaa" opacity="0.5">
+      <animate attributeName="cx" values="700;705;700" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="755" cy="340" r="2.2" fill="#00ddff" opacity="0.6">
+      <animate attributeName="cx" values="755;760;755" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="720" cy="430" r="1.8" fill="#00ccbb" opacity="0.5">
+      <animate attributeName="cx" values="720;725;720" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="745" cy="510" r="2" fill="#00eeff" opacity="0.6">
+      <animate attributeName="cx" values="745;750;745" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="705" cy="590" r="1.5" fill="#00ffdd" opacity="0.5">
+      <animate attributeName="cx" values="705;710;705" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Bottom area nodes -->
+    <circle cx="150" cy="700" r="2" fill="#00ccff" opacity="0.6">
+      <animate attributeName="cy" values="700;705;700" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="230" cy="740" r="1.5" fill="#00ffcc" opacity="0.5">
+      <animate attributeName="cy" values="740;745;740" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="350" cy="720" r="2.2" fill="#00ddee" opacity="0.6">
+      <animate attributeName="cy" values="720;725;720" dur="6s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="450" cy="735" r="1.8" fill="#00ccdd" opacity="0.5">
+      <animate attributeName="cy" values="735;740;735" dur="4.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="570" cy="715" r="2" fill="#00eeff" opacity="0.6">
+      <animate attributeName="cy" values="715;720;715" dur="5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="660" cy="745" r="1.5" fill="#00ffbb" opacity="0.5">
+      <animate attributeName="cy" values="745;750;745" dur="4s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Connection lines between floating nodes -->
+  <g stroke="#00aacc" stroke-width="0.5" opacity="0.3">
+    <line x1="120" y1="80" x2="180" y2="120">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="180" y1="120" x2="250" y2="60"/>
+    <line x1="250" y1="60" x2="320" y2="95"/>
+    <line x1="480" y1="70" x2="550" y2="110"/>
+    <line x1="550" y1="110" x2="620" y2="55"/>
+    <line x1="620" y1="55" x2="700" y2="90"/>
+    <line x1="60" y1="200" x2="100" y2="280"/>
+    <line x1="45" y1="350" x2="80" y2="420"/>
+    <line x1="55" y1="500" x2="95" y2="580"/>
+    <line x1="740" y1="180" x2="700" y2="260"/>
+    <line x1="755" y1="340" x2="720" y2="430"/>
+    <line x1="745" y1="510" x2="705" y2="590"/>
+  </g>
+  
+  <!-- Outer rotating ring system -->
+  <g transform="translate(400, 400)">
+    <!-- Outermost ring - data/tech pattern -->
+    <g opacity="0.4">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="120s" repeatCount="indefinite"/>
+      <!-- Ring segments with tech patterns -->
+      <circle r="340" fill="none" stroke="#0066aa" stroke-width="2" stroke-dasharray="20 10 5 10" opacity="0.3"/>
+      <circle r="345" fill="none" stroke="#0088cc" stroke-width="1" stroke-dasharray="3 15" opacity="0.4"/>
+      <circle r="335" fill="none" stroke="#004488" stroke-width="1" stroke-dasharray="8 20 2 20" opacity="0.3"/>
+      
+      <!-- Data nodes on outer ring -->
+      <g filter="url(#nodeGlow)">
+        <circle cx="340" cy="0" r="3" fill="#00ccff" opacity="0.8"/>
+        <circle cx="-340" cy="0" r="2.5" fill="#00aadd" opacity="0.7"/>
+        <circle cx="0" cy="340" r="3" fill="#00ddff" opacity="0.8"/>
+        <circle cx="0" cy="-340" r="2.5" fill="#00bbee" opacity="0.7"/>
+        <circle cx="240" cy="240" r="2" fill="#00ccee" opacity="0.6"/>
+        <circle cx="-240" cy="240" r="2" fill="#00aacc" opacity="0.6"/>
+        <circle cx="240" cy="-240" r="2" fill="#00ddee" opacity="0.6"/>
+        <circle cx="-240" cy="-240" r="2" fill="#00bbdd" opacity="0.6"/>
+        <circle cx="320" cy="100" r="1.5" fill="#00eeff" opacity="0.5"/>
+        <circle cx="-320" cy="100" r="1.5" fill="#00ccdd" opacity="0.5"/>
+        <circle cx="320" cy="-100" r="1.5" fill="#00ddcc" opacity="0.5"/>
+        <circle cx="-320" cy="-100" r="1.5" fill="#00aaaa" opacity="0.5"/>
+        <circle cx="100" cy="320" r="1.5" fill="#00ffdd" opacity="0.5"/>
+        <circle cx="-100" cy="320" r="1.5" fill="#00ddbb" opacity="0.5"/>
+        <circle cx="100" cy="-320" r="1.5" fill="#00ccaa" opacity="0.5"/>
+        <circle cx="-100" cy="-320" r="1.5" fill="#00aa99" opacity="0.5"/>
+      </g>
+    </g>
+    
+    <!-- Second outer ring - counter rotation -->
+    <g opacity="0.5">
+      <animateTransform attributeName="transform" type="rotate" from="360" to="0" dur="90s" repeatCount="indefinite"/>
+      <circle r="300" fill="none" stroke="#0088bb" stroke-width="2" stroke-dasharray="30 20" opacity="0.4"/>
+      <circle r="305" fill="none" stroke="#00aadd" stroke-width="1" stroke-dasharray="5 25" opacity="0.3"/>
+      
+      <!-- Tech symbols/markers -->
+      <g fill="#00ccff" opacity="0.6">
+        <rect x="295" y="-3" width="15" height="6" rx="1"/>
+        <rect x="-310" y="-3" width="15" height="6" rx="1"/>
+        <rect x="-3" y="295" width="6" height="15" rx="1"/>
+        <rect x="-3" y="-310" width="6" height="15" rx="1"/>
+      </g>
+      
+      <!-- Data nodes -->
+      <g filter="url(#nodeGlow)">
+        <circle cx="212" cy="212" r="2.5" fill="#00ddff" opacity="0.7"/>
+        <circle cx="-212" cy="212" r="2.5" fill="#00bbdd" opacity="0.7"/>
+        <circle cx="212" cy="-212" r="2.5" fill="#00ccee" opacity="0.7"/>
+        <circle cx="-212" cy="-212" r="2.5" fill="#00aacc" opacity="0.7"/>
+        <circle cx="280" cy="100" r="2" fill="#00eeff" opacity="0.6"/>
+        <circle cx="-280" cy="100" r="2" fill="#00ddee" opacity="0.6"/>
+        <circle cx="280" cy="-100" r="2" fill="#00ccdd" opacity="0.6"/>
+        <circle cx="-280" cy="-100" r="2" fill="#00bbcc" opacity="0.6"/>
+      </g>
+    </g>
+    
+    <!-- Main cyan arc ring (most prominent) -->
+    <g opacity="0.9">
+      <animateTransform attributeName="transform" type="rotate" from="0" to="360" dur="60s" repeatCount="indefinite"/>
+      
+      <!-- Main arc segments -->
+      <path d="M 0 -260 A 260 260 0 0 1 225 130" fill="none" stroke="url(#ringGradient1)" stroke-width="4" stroke-linecap="round" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite"/>
+      </path>
+      <path d="M -50 258 A 260 260 0 0 1 -225 -130" fill="none" stroke="url(#ringGradient1)" stroke-width="4" stroke-linecap="round" filter="url(#glow)">
+        <animate attributeName="stroke-opacity" values="0.7;0.95;0.7" dur="2.5s" repeatCount="indefinite"/>
+      </path>
+      
+      <!-- Secondary arc details -->
+      <path d="M 240 -100 A 260 260 0 0 1 260 0" fill="none" stroke="#00ccdd" stroke-width="2" opacity="0.6"/>
+      <path d="M -200 -170 A 260 260 0 0 1 -100 -240" fill="none" stroke="#00aacc" stroke-width="2" opacity="0.5"/>
+      
+      <!-- Arc endpoint nodes -->
+      <g filter="url(#glow)">
+        <circle cx="0" cy="-260" r="5" fill="#00ffff" opacity="0.9">
+          <animate attributeName="r" values="5;6;5" dur="1.5s" repeatCount="indefinite"/>
+        </circle>
+        <circle cx="225" cy="130" r="4" fill="#00ddee" opacity="0.8"/>
+        <circle cx="-50" cy="258" r="4" fill="#00ccdd" opacity="0.8"/>
+        <circle cx="-225" cy="-130" r="5" fill="#00ffff" opacity="0.9">
+          <animate attributeName="r" values="5;6;5" dur="1.5s" repeatCount="indefinite" begin="0.5s"/>
+        </circle>
+      </g>
+      
+      <!-- Tech markers along arcs -->
+      <g fill="#00eeff" opacity="0.7">
+        <circle cx="130" cy="-225" r="2"/>
+        <circle cx="200" cy="-170" r="1.5"/>
+        <circle cx="250" cy="50" r="2"/>
+        <circle cx="-150" cy="210" r="2"/>
+        <circle cx="-260" cy="0" r="1.5"/>
+        <circle cx="-170" cy="-200" r="2"/>
+      </g>
+    </g>
+  </g>
+  
+  <!-- Central crystal structure - SMALLER Octagonal gem with central hole -->
+  <g transform="translate(400, 400) scale(0.7)" filter="url(#crystalGlow)">
+    <!-- Crystal outer glow -->
+    <ellipse cx="0" cy="0" rx="100" ry="100" fill="#00ff88" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;0.25;0.15" dur="3s" repeatCount="indefinite"/>
+    </ellipse>
+    
+    <!-- Octagonal gem with center hole -->
+    <g id="octagonalGem">
+      <!-- Back/shadow layer -->
+      <polygon points="95,0 67,67 0,95 -67,67 -95,0 -67,-67 0,-95 67,-67" fill="#003322" opacity="0.5"/>
+      
+      <!-- OUTER TRIANGULAR FACETS - Top-right quadrant (bright) -->
+      <polygon points="0,-95 67,-67 33,-81" fill="#66ffaa" stroke="#44dd88" stroke-width="0.5" opacity="0.95">
+        <animate attributeName="opacity" values="0.9;1;0.9" dur="2s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="0,-95 33,-81 0,-70" fill="#88ffcc" stroke="#55ee99" stroke-width="0.3" opacity="0.9"/>
+      <polygon points="67,-67 33,-81 50,-55" fill="#55ee99" stroke="#44dd88" stroke-width="0.3" opacity="0.85"/>
+      <polygon points="67,-67 95,0 81,-33" fill="#77ffbb" stroke="#55ee99" stroke-width="0.5" opacity="0.9"/>
+      <polygon points="67,-67 81,-33 55,-50" fill="#99ffdd" stroke="#66ffaa" stroke-width="0.3" opacity="0.85"/>
+      <polygon points="95,0 81,-33 70,0" fill="#88ffcc" stroke="#55ee99" stroke-width="0.3" opacity="0.9"/>
+      
+      <!-- Top-left quadrant (medium) -->
+      <polygon points="0,-95 -67,-67 -33,-81" fill="#44dd88" stroke="#33cc77" stroke-width="0.5" opacity="0.85"/>
+      <polygon points="0,-95 -33,-81 0,-70" fill="#55ee99" stroke="#44dd88" stroke-width="0.3" opacity="0.8"/>
+      <polygon points="-67,-67 -33,-81 -50,-55" fill="#33cc77" stroke="#22bb66" stroke-width="0.3" opacity="0.8"/>
+      <polygon points="-67,-67 -95,0 -81,-33" fill="#44dd88" stroke="#33cc77" stroke-width="0.5" opacity="0.8"/>
+      <polygon points="-67,-67 -81,-33 -55,-50" fill="#55ee99" stroke="#44dd88" stroke-width="0.3" opacity="0.75"/>
+      <polygon points="-95,0 -81,-33 -70,0" fill="#33cc77" stroke="#22bb66" stroke-width="0.3" opacity="0.8"/>
+      
+      <!-- Bottom-left quadrant (darker) -->
+      <polygon points="-95,0 -67,67 -81,33" fill="#22aa55" stroke="#119944" stroke-width="0.5" opacity="0.75"/>
+      <polygon points="-95,0 -81,33 -70,0" fill="#33bb66" stroke="#22aa55" stroke-width="0.3" opacity="0.7"/>
+      <polygon points="-67,67 -81,33 -55,50" fill="#119944" stroke="#008833" stroke-width="0.3" opacity="0.7"/>
+      <polygon points="-67,67 0,95 -33,81" fill="#22aa55" stroke="#119944" stroke-width="0.5" opacity="0.7"/>
+      <polygon points="-67,67 -33,81 -50,55" fill="#33bb66" stroke="#22aa55" stroke-width="0.3" opacity="0.65"/>
+      <polygon points="0,95 -33,81 0,70" fill="#119944" stroke="#008833" stroke-width="0.3" opacity="0.7"/>
+      
+      <!-- Bottom-right quadrant (darkest) -->
+      <polygon points="0,95 67,67 33,81" fill="#117744" stroke="#006633" stroke-width="0.5" opacity="0.65"/>
+      <polygon points="0,95 33,81 0,70" fill="#228855" stroke="#117744" stroke-width="0.3" opacity="0.6"/>
+      <polygon points="67,67 33,81 50,55" fill="#006633" stroke="#005522" stroke-width="0.3" opacity="0.6"/>
+      <polygon points="67,67 95,0 81,33" fill="#117744" stroke="#006633" stroke-width="0.5" opacity="0.6"/>
+      <polygon points="67,67 81,33 55,50" fill="#228855" stroke="#117744" stroke-width="0.3" opacity="0.55"/>
+      <polygon points="95,0 81,33 70,0" fill="#006633" stroke="#005522" stroke-width="0.3" opacity="0.6"/>
+      
+      <!-- Middle ring facets -->
+      <polygon points="0,-70 33,-81 25,-45" fill="#55ee99" stroke="#44dd88" stroke-width="0.3"/>
+      <polygon points="0,-70 25,-45 0,-35" fill="#66ffaa" stroke="#55ee99" stroke-width="0.3"/>
+      <polygon points="33,-81 50,-55 25,-45" fill="#44dd88" stroke="#33cc77" stroke-width="0.3"/>
+      <polygon points="50,-55 25,-45 25,-25" fill="#55ee99" stroke="#44dd88" stroke-width="0.3"/>
+      <polygon points="50,-55 55,-50 25,-25" fill="#66ffaa" stroke="#55ee99" stroke-width="0.3"/>
+      <polygon points="55,-50 70,0 35,0" fill="#77ffbb" stroke="#66ffaa" stroke-width="0.3"/>
+      <polygon points="55,-50 35,0 25,-25" fill="#88ffcc" stroke="#77ffbb" stroke-width="0.3"/>
+      
+      <polygon points="0,-70 -33,-81 -25,-45" fill="#44dd88" stroke="#33cc77" stroke-width="0.3"/>
+      <polygon points="0,-70 -25,-45 0,-35" fill="#55ee99" stroke="#44dd88" stroke-width="0.3"/>
+      <polygon points="-33,-81 -50,-55 -25,-45" fill="#33cc77" stroke="#22bb66" stroke-width="0.3"/>
+      <polygon points="-50,-55 -25,-45 -25,-25" fill="#44dd88" stroke="#33cc77" stroke-width="0.3"/>
+      <polygon points="-50,-55 -55,-50 -25,-25" fill="#33cc77" stroke="#22bb66" stroke-width="0.3"/>
+      <polygon points="-55,-50 -70,0 -35,0" fill="#44dd88" stroke="#33cc77" stroke-width="0.3"/>
+      <polygon points="-55,-50 -35,0 -25,-25" fill="#55ee99" stroke="#44dd88" stroke-width="0.3"/>
+      
+      <polygon points="-70,0 -81,33 -35,0" fill="#22aa55" stroke="#119944" stroke-width="0.3"/>
+      <polygon points="-81,33 -55,50 -35,0" fill="#33bb66" stroke="#22aa55" stroke-width="0.3"/>
+      <polygon points="-55,50 -35,0 -25,25" fill="#22aa55" stroke="#119944" stroke-width="0.3"/>
+      <polygon points="-55,50 -50,55 -25,25" fill="#119944" stroke="#008833" stroke-width="0.3"/>
+      <polygon points="-50,55 -33,81 -25,45" fill="#22aa55" stroke="#119944" stroke-width="0.3"/>
+      <polygon points="-50,55 -25,45 -25,25" fill="#33bb66" stroke="#22aa55" stroke-width="0.3"/>
+      <polygon points="-33,81 0,70 -25,45" fill="#119944" stroke="#008833" stroke-width="0.3"/>
+      <polygon points="0,70 -25,45 0,35" fill="#22aa55" stroke="#119944" stroke-width="0.3"/>
+      
+      <polygon points="70,0 81,33 35,0" fill="#117744" stroke="#006633" stroke-width="0.3"/>
+      <polygon points="81,33 55,50 35,0" fill="#228855" stroke="#117744" stroke-width="0.3"/>
+      <polygon points="55,50 35,0 25,25" fill="#117744" stroke="#006633" stroke-width="0.3"/>
+      <polygon points="55,50 50,55 25,25" fill="#006633" stroke="#005522" stroke-width="0.3"/>
+      <polygon points="50,55 33,81 25,45" fill="#117744" stroke="#006633" stroke-width="0.3"/>
+      <polygon points="50,55 25,45 25,25" fill="#228855" stroke="#117744" stroke-width="0.3"/>
+      <polygon points="33,81 0,70 25,45" fill="#006633" stroke="#005522" stroke-width="0.3"/>
+      <polygon points="0,70 25,45 0,35" fill="#117744" stroke="#006633" stroke-width="0.3"/>
+      
+            
+      <!-- Highlights -->
+      <polygon points="0,-95 20,-90 10,-80" fill="#ffffff" opacity="0.4">
+        <animate attributeName="opacity" values="0.3;0.5;0.3" dur="2s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="67,-67 75,-55 60,-60" fill="#ffffff" opacity="0.3">
+        <animate attributeName="opacity" values="0.2;0.4;0.2" dur="2.5s" repeatCount="indefinite"/>
+      </polygon>
+      <polygon points="85,-20 95,0 80,-10" fill="#aaffdd" opacity="0.35"/>
+      
+      <!-- Edge highlights -->
+      <line x1="0" y1="-95" x2="67" y2="-67" stroke="#aaffcc" stroke-width="1" opacity="0.6"/>
+      <line x1="67" y1="-67" x2="95" y2="0" stroke="#88ffbb" stroke-width="0.8" opacity="0.5"/>
+      <line x1="0" y1="-95" x2="-67" y2="-67" stroke="#77eeaa" stroke-width="0.6" opacity="0.4"/>
+    </g>
+    
+    <!-- Crystal sparkles -->
+    <g id="sparkles">
+      <circle cx="-50" cy="-70" r="2" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;1;0" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+        <animate attributeName="r" values="1;4;1" dur="1.5s" repeatCount="indefinite" begin="0s"/>
+      </circle>
+      <circle cx="55" cy="-50" r="2" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;1;0" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
+        <animate attributeName="r" values="1;3;1" dur="1.8s" repeatCount="indefinite" begin="0.5s"/>
+      </circle>
+      <circle cx="70" cy="10" r="2" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;0.9;0" dur="2s" repeatCount="indefinite" begin="1s"/>
+        <animate attributeName="r" values="1;2.5;1" dur="2s" repeatCount="indefinite" begin="1s"/>
+      </circle>
+      <circle cx="-60" cy="-35" r="2" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;0.8;0" dur="1.6s" repeatCount="indefinite" begin="0.3s"/>
+        <animate attributeName="r" values="1;3;1" dur="1.6s" repeatCount="indefinite" begin="0.3s"/>
+      </circle>
+      <circle cx="0" cy="-65" r="2" fill="#ffffff" opacity="0">
+        <animate attributeName="opacity" values="0;0.9;0" dur="1.4s" repeatCount="indefinite" begin="0.2s"/>
+        <animate attributeName="r" values="1;3.5;1" dur="1.4s" repeatCount="indefinite" begin="0.2s"/>
+      </circle>
+    </g>
+  </g>
+  
+  <!-- Small floating crystal fragments (between C and gem) -->
+  <g transform="translate(400, 400)" filter="url(#glow)">
+    <!-- Top fragments -->
+    <polygon points="-30,-90 -22,-98 -14,-90 -18,-82" fill="#55ee99" opacity="0.7">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,-2; 0,0" dur="3s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="25,-95 33,-103 41,-95 33,-87" fill="#66ffaa" opacity="0.65">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,-3; 0,0" dur="3.5s" repeatCount="indefinite"/>
+    </polygon>
+    
+    <!-- Left fragments -->
+    <polygon points="-95,-25 -103,-17 -95,-9 -87,-17" fill="#44dd88" opacity="0.6">
+      <animateTransform attributeName="transform" type="translate" values="0,0; -2,0; 0,0" dur="4s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="-100,30 -108,38 -100,46 -92,38" fill="#33cc77" opacity="0.55"/>
+    
+    <!-- Right fragments (near C opening) -->
+    <polygon points="75,-40 83,-48 91,-40 83,-32" fill="#66ffaa" opacity="0.65">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 2,0; 0,0" dur="3.2s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="80,35 88,43 96,35 88,27" fill="#44dd88" opacity="0.6"/>
+    
+    <!-- Bottom fragments -->
+    <polygon points="-25,90 -17,98 -9,90 -17,82" fill="#33cc77" opacity="0.6">
+      <animateTransform attributeName="transform" type="translate" values="0,0; 0,2; 0,0" dur="3.8s" repeatCount="indefinite"/>
+    </polygon>
+    <polygon points="30,92 38,100 46,92 38,84" fill="#44dd88" opacity="0.55"/>
+  </g>
+  
+  <!-- Additional floating data particles -->
+  <g id="dataParticles" filter="url(#nodeGlow)">
+    <!-- Inner zone particles -->
+    <circle cx="280" cy="300" r="2" fill="#00ffcc" opacity="0.7">
+      <animate attributeName="cy" values="300;295;300" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.5;0.8;0.5" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="520" cy="310" r="1.5" fill="#00ddff" opacity="0.6">
+      <animate attributeName="cy" values="310;305;310" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="290" cy="500" r="2" fill="#00eedd" opacity="0.7">
+      <animate attributeName="cy" values="500;505;500" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="510" cy="490" r="1.5" fill="#00ccff" opacity="0.6">
+      <animate attributeName="cy" values="490;495;490" dur="3.2s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Mid zone particles -->
+    <circle cx="200" cy="400" r="2.5" fill="#00ffdd" opacity="0.7">
+      <animate attributeName="cx" values="200;195;200" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="600" cy="400" r="2.5" fill="#00ddcc" opacity="0.7">
+      <animate attributeName="cx" values="600;605;600" dur="4s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="220" r="2" fill="#00ffee" opacity="0.6">
+      <animate attributeName="cy" values="220;215;220" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="400" cy="580" r="2" fill="#00eeff" opacity="0.6">
+      <animate attributeName="cy" values="580;585;580" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Scattered accent particles -->
+    <circle cx="320" cy="260" r="1" fill="#44ffcc" opacity="0.5">
+      <animate attributeName="opacity" values="0.3;0.7;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="480" cy="270" r="1" fill="#33ffdd" opacity="0.5">
+      <animate attributeName="opacity" values="0.4;0.7;0.4" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="330" cy="540" r="1" fill="#55ffbb" opacity="0.5">
+      <animate attributeName="opacity" values="0.3;0.6;0.3" dur="2.2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="470" cy="530" r="1" fill="#44eecc" opacity="0.5">
+      <animate attributeName="opacity" values="0.4;0.65;0.4" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+  
+  <!-- Connection lines from crystal to nearby nodes -->
+  <g stroke="#00aa88" stroke-width="0.5" opacity="0.3">
+    <line x1="340" y1="345" x2="280" y2="300">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="460" y1="345" x2="520" y2="310">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="2.5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="340" y1="435" x2="290" y2="500">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <line x1="460" y1="435" x2="510" y2="490">
+      <animate attributeName="opacity" values="0.2;0.4;0.2" dur="2.8s" repeatCount="indefinite"/>
+    </line>
+    <line x1="320" y1="390" x2="200" y2="400">
+      <animate attributeName="opacity" values="0.15;0.35;0.15" dur="3.5s" repeatCount="indefinite"/>
+    </line>
+    <line x1="480" y1="390" x2="600" y2="400">
+      <animate attributeName="opacity" values="0.15;0.35;0.15" dur="3.5s" repeatCount="indefinite"/>
+    </line>
+  </g>
+  
+
+  
+  <!-- Additional small detail nodes throughout -->
+  <g id="microNodes" filter="url(#nodeGlow)" opacity="0.4">
+    <circle cx="160" cy="180" r="1" fill="#00ddee"/>
+    <circle cx="640" cy="190" r="1" fill="#00ccdd"/>
+    <circle cx="170" cy="620" r="1" fill="#00eeff"/>
+    <circle cx="630" cy="610" r="1" fill="#00ddff"/>
+    <circle cx="260" cy="140" r="0.8" fill="#00cccc"/>
+    <circle cx="540" cy="150" r="0.8" fill="#00bbbb"/>
+    <circle cx="250" cy="660" r="0.8" fill="#00dddd"/>
+    <circle cx="550" cy="650" r="0.8" fill="#00cccc"/>
+    <circle cx="140" cy="340" r="1" fill="#00eedd"/>
+    <circle cx="660" cy="350" r="1" fill="#00ddcc"/>
+    <circle cx="130" cy="460" r="1" fill="#00ffee"/>
+    <circle cx="670" cy="450" r="1" fill="#00eedd"/>
+  </g>
+  
+</svg>

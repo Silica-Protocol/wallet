@@ -1,0 +1,165 @@
+<div class="send-transaction">
+  <div class="send-header">
+    <h2>Send CHERT</h2>
+    <p>Send CHERT tokens to any valid Chert address</p>
+  </div>
+
+  @if (!isWalletReady()) {
+    <div class="wallet-not-ready">
+      @if (!exists()) {
+        <p>Please create a wallet first to send transactions.</p>
+        <button class="action-button" routerLink="/wallet">Go to Wallet</button>
+      } @else if (isLocked()) {
+        <p>Please unlock your wallet to send transactions.</p>
+        <button class="action-button" routerLink="/wallet">Unlock Wallet</button>
+      }
+    </div>
+  } @else {
+    <div class="send-form-container">
+      <form [formGroup]="sendForm" (ngSubmit)="sendTransaction()" class="send-form">
+
+        <!-- Balance Display -->
+        <div class="balance-display">
+          <div class="balance-info">
+            <span class="balance-label">Available Balance:</span>
+            <span class="balance-amount">{{ availableBalance() | number:'1.0-9' }} CHERT</span>
+          </div>
+          <button type="button" class="max-button" (click)="setMaxAmount()">Use Max</button>
+        </div>
+
+        <!-- Recipient Address -->
+        <div class="form-group">
+          <label for="recipient">Recipient Address</label>
+          <input
+            id="recipient"
+            type="text"
+            formControlName="recipient"
+            placeholder="chert_..."
+            [class.invalid]="sendForm.get('recipient')?.invalid && sendForm.get('recipient')?.touched"
+          />
+          @if (sendForm.get('recipient')?.invalid && sendForm.get('recipient')?.touched) {
+            <div class="error-message">
+              @if (sendForm.get('recipient')?.errors?.['required']) {
+                Recipient address is required
+              } @else if (sendForm.get('recipient')?.errors?.['invalidAddress']) {
+                Please enter a valid Chert address
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Amount -->
+        <div class="form-group">
+          <label for="amount">Amount (CHERT)</label>
+          <input
+            id="amount"
+            type="number"
+            formControlName="amount"
+            placeholder="0.000000000"
+            step="0.000000001"
+            min="0"
+            [max]="maxSendAmount()"
+            [class.invalid]="sendForm.get('amount')?.invalid && sendForm.get('amount')?.touched"
+          />
+          @if (sendForm.get('amount')?.invalid && sendForm.get('amount')?.touched) {
+            <div class="error-message">
+              @if (sendForm.get('amount')?.errors?.['required']) {
+                Amount is required
+              } @else if (sendForm.get('amount')?.errors?.['min']) {
+                Amount must be greater than 0
+              } @else if (sendForm.get('amount')?.errors?.['insufficientBalance']) {
+                Insufficient balance (including fees)
+              } @else if (sendForm.get('amount')?.errors?.['invalidAmount']) {
+                Please enter a valid amount
+              }
+            </div>
+          }
+        </div>
+
+        <!-- Fee Priority -->
+        @if (feeEstimate()) {
+          <div class="fee-section">
+            <h4>Transaction Fee</h4>
+            <div class="fee-options">
+              <label class="fee-option">
+                <input type="radio" formControlName="priority" value="low" />
+                <div class="fee-details">
+                  <div class="fee-name">Low Priority</div>
+                  <div class="fee-amount">{{ lowFeeAmount() | number:'1.0-9' }} CHERT</div>
+                  <div class="fee-time">~{{ feeEstimate()!.estimated_confirmation_time * 3 }} min</div>
+                </div>
+              </label>
+              <label class="fee-option">
+                <input type="radio" formControlName="priority" value="medium" />
+                <div class="fee-details">
+                  <div class="fee-name">Medium Priority</div>
+                  <div class="fee-amount">{{ mediumFeeAmount() | number:'1.0-9' }} CHERT</div>
+                  <div class="fee-time">~{{ feeEstimate()!.estimated_confirmation_time }} min</div>
+                </div>
+              </label>
+              <label class="fee-option">
+                <input type="radio" formControlName="priority" value="high" />
+                <div class="fee-details">
+                  <div class="fee-name">High Priority</div>
+                  <div class="fee-amount">{{ highFeeAmount() | number:'1.0-9' }} CHERT</div>
+                  <div class="fee-time">~{{ Math.max(1, feeEstimate()!.estimated_confirmation_time / 2) }} min</div>
+                </div>
+              </label>
+            </div>
+            <div class="network-status">
+              <span class="status-indicator" [style.color]="getCongestionColor()">{{ getCongestionText() }}</span>
+            </div>
+          </div>
+        }
+
+        <!-- Memo (Optional) -->
+        <div class="form-group">
+          <label for="memo">Memo (Optional)</label>
+          <input
+            id="memo"
+            type="text"
+            formControlName="memo"
+            placeholder="Add a note to this transaction"
+            maxlength="256"
+          />
+          <div class="character-count">
+            {{ sendForm.get('memo')?.value?.length || 0 }}/256
+          </div>
+        </div>
+
+        <!-- Transaction Summary -->
+        @if (sendForm.valid && feeEstimate()) {
+          <div class="transaction-summary">
+            <h4>Transaction Summary</h4>
+            <div class="summary-row">
+              <span>Amount:</span>
+              <span>{{ sendForm.get('amount')?.value || 0 }} CHERT</span>
+            </div>
+            <div class="summary-row">
+              <span>Fee:</span>
+              <span>{{ selectedFeeAmount() | number:'1.0-9' }} CHERT</span>
+            </div>
+            <div class="summary-row total">
+              <span>Total:</span>
+              <span>{{ ((parseFloat(sendForm.get('amount')?.value || '0') * 1e9 + parseFloat(feeEstimate()!.priority_fees[selectedPriority])) / 1e9) | number:'1.0-9' }} CHERT</span>
+            </div>
+          </div>
+        }
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="send-button"
+          [disabled]="sendForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            <div class="spinner"></div>
+            Sending...
+          } @else {
+            Send CHERT
+          }
+        </button>
+      </form>
+    </div>
+  }
+</div>

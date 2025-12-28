@@ -1,0 +1,239 @@
+<div class="proposal-detail" *ngIf="proposal">
+  <!-- Header -->
+  <div class="detail-header">
+    <div class="header-content">
+      <h2>Proposal #{{ proposal.proposal_id }}</h2>
+      <div class="state-badge" [ngClass]="getStateBadgeClass(proposal.state)">
+        {{ proposal.state }}
+      </div>
+    </div>
+    <div class="header-meta">
+      <span class="meta-item">
+        <strong>Proposer:</strong> {{ truncateAddress(proposal.proposer) }}
+      </span>
+      <span class="meta-item">
+        <strong>Created:</strong> {{ formatTimestamp(proposal.created_at) }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'overview'"
+      (click)="selectTab('overview')">
+      Overview
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'votes'"
+      (click)="selectTab('votes')">
+      Votes ({{ proposalVotes.length }})
+    </button>
+  </div>
+
+  <!-- Overview Tab -->
+  <div *ngIf="selectedTab === 'overview'" class="tab-content">
+    <!-- Description -->
+    <div class="description-section">
+      <h3>Description</h3>
+      <div class="description-content">
+        {{ proposal.description }}
+      </div>
+    </div>
+
+    <!-- Proposal Actions -->
+    <div class="actions-section" *ngIf="proposal.targets.length > 0">
+      <h3>Proposed Actions</h3>
+      <div class="actions-list">
+        <div *ngFor="let i of [].constructor(proposal.targets.length); let idx = index" class="action-item">
+          <div class="action-header">
+            <span class="action-number">Action {{ idx + 1 }}</span>
+          </div>
+          <div class="action-details">
+             <div class="action-field">
+               <span class="field-label">Target Contract:</span>
+               <span>{{ truncateAddress(proposal.targets[idx]) }}</span>
+             </div>
+             <div class="action-field">
+               <span class="field-label">Value (CHERT):</span>
+               <span>{{ proposal.values[idx] }}</span>
+             </div>
+             <div class="action-field">
+               <span class="field-label">Function Call:</span>
+               <span class="calldata">{{ formatCalldata(proposal.calldatas[idx]) }}</span>
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voting Progress -->
+    <div class="voting-section">
+      <h3>Voting Progress</h3>
+
+      <!-- Time Status -->
+      <div class="time-status">
+        <div class="status-item">
+          <span class="label">Voting Period:</span>
+          <span class="value">{{ formatTimestamp(proposal.vote_start) }} - {{ formatTimestamp(proposal.vote_end) }}</span>
+        </div>
+        <div class="status-item">
+          <span class="label">Time Remaining:</span>
+          <span class="value">{{ getTimeRemaining() }}</span>
+        </div>
+      </div>
+
+      <!-- Vote Counts -->
+      <div class="vote-counts">
+        <div class="vote-stat">
+          <span class="stat-label">For:</span>
+          <span class="stat-value for">{{ proposal.votes_for.toLocaleString() }}</span>
+        </div>
+        <div class="vote-stat">
+          <span class="stat-label">Against:</span>
+          <span class="stat-value against">{{ proposal.votes_against.toLocaleString() }}</span>
+        </div>
+        <div class="vote-stat">
+          <span class="stat-label">Abstain:</span>
+          <span class="stat-value abstain">{{ proposal.votes_abstain.toLocaleString() }}</span>
+        </div>
+        <div class="vote-stat">
+          <span class="stat-label">Total:</span>
+          <span class="stat-value total">{{ (proposal.votes_for + proposal.votes_against + proposal.votes_abstain).toLocaleString() }}</span>
+        </div>
+      </div>
+
+      <!-- Support Progress Bar -->
+      <div class="progress-section">
+        <h4>Support ({{ getSupportPercentage().toFixed(1) }}%)</h4>
+        <div class="progress-bar">
+          <div class="progress-fill for-fill" [style.width.%]="getSupportPercentage()"></div>
+        </div>
+        <div class="progress-labels">
+          <span class="for-label">{{ getSupportPercentage().toFixed(1) }}% For</span>
+          <span class="against-label">{{ (100 - getSupportPercentage()).toFixed(1) }}% Against/Abstain</span>
+        </div>
+      </div>
+
+      <!-- Quorum Progress Bar -->
+      <div class="progress-section">
+        <h4>Quorum ({{ getQuorumProgress().toFixed(1) }}%)</h4>
+        <div class="progress-bar">
+          <div class="progress-fill quorum-fill" [style.width.%]="getQuorumProgress()"></div>
+        </div>
+        <div class="progress-labels">
+          <span class="quorum-label">{{ getQuorumProgress().toFixed(1) }}% of required participation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voting Interface -->
+    <div class="voting-interface" *ngIf="canVote()">
+      <h3>Cast Your Vote</h3>
+      <p class="voting-power">Your voting power: {{ userVotingPower.toLocaleString() }}</p>
+
+      <form [formGroup]="voteForm" (ngSubmit)="castVote()" class="vote-form">
+        <div class="address-field">
+          <label for="voterAddress">Your address</label>
+          <input
+            type="text"
+            id="voterAddress"
+            formControlName="voterAddress"
+            placeholder="chert_address..."
+            [class.error]="voteForm.get('voterAddress')?.invalid && voteForm.get('voterAddress')?.touched">
+          <div class="error-message" *ngIf="voteForm.get('voterAddress')?.invalid && voteForm.get('voterAddress')?.touched">
+            Please enter a valid Chert address.
+          </div>
+        </div>
+
+        <div class="vote-options">
+          <label class="vote-option">
+            <input type="radio" formControlName="support" value="1">
+            <span class="option-label for-option">For</span>
+            <span class="option-desc">Support this proposal</span>
+          </label>
+
+          <label class="vote-option">
+            <input type="radio" formControlName="support" value="0">
+            <span class="option-label against-option">Against</span>
+            <span class="option-desc">Oppose this proposal</span>
+          </label>
+        </div>
+
+        <div class="reason-field">
+          <label for="reason">Reason (optional):</label>
+          <textarea
+            id="reason"
+            formControlName="reason"
+            placeholder="Explain your vote decision..."
+            rows="3">
+          </textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="vote-btn"
+          [disabled]="voteForm.invalid || isVoting">
+          <span *ngIf="!isVoting">Cast Vote</span>
+          <span *ngIf="isVoting">Submitting...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Cannot Vote Message -->
+    <div class="cannot-vote" *ngIf="!canVote() && proposal.state === 'Active'">
+      <div class="cannot-vote-icon">⚠️</div>
+      <h4>Cannot Vote</h4>
+      <p *ngIf="userVotingPower === 0">You need voting power to participate in governance.</p>
+      <p *ngIf="userVotingPower > 0 && proposal.has_voted">You have already voted on this proposal.</p>
+    </div>
+  </div>
+
+  <!-- Votes Tab -->
+  <div *ngIf="selectedTab === 'votes'" class="tab-content">
+    <div class="votes-header">
+      <h3>All Votes ({{ proposalVotes.length }})</h3>
+    </div>
+
+    <!-- Votes List -->
+    <div class="votes-list" *ngIf="proposalVotes.length > 0">
+      <div *ngFor="let vote of proposalVotes" class="vote-item">
+        <div class="vote-header">
+          <span class="voter">{{ truncateAddress(vote.voter) }}</span>
+          <span class="vote-type" [ngClass]="getVoteTypeClass(vote.support)">
+            {{ getVoteTypeText(vote.support) }}
+          </span>
+          <span class="vote-weight">{{ vote.weight.toLocaleString() }}</span>
+        </div>
+        <div class="vote-meta">
+          <span class="vote-time">{{ formatTimestamp(vote.voted_at) }}</span>
+        </div>
+        <div class="vote-reason" *ngIf="vote.reason">
+          {{ vote.reason }}
+        </div>
+      </div>
+    </div>
+
+    <!-- No Votes -->
+    <div class="no-votes" *ngIf="proposalVotes.length === 0">
+      <div class="no-votes-icon">📊</div>
+      <h4>No votes yet</h4>
+      <p>Voting has not started or no votes have been cast.</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading proposal details...</p>
+  </div>
+</div>
+
+<!-- Error State -->
+<div *ngIf="!proposal && !isLoading" class="error-state">
+  <div class="error-icon">❌</div>
+  <h3>Proposal Not Found</h3>
+  <p>The requested proposal could not be found.</p>
+</div>

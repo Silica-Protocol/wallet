@@ -1,0 +1,62 @@
+[package]
+name = "silica-wallet"
+version = "1.0.0"
+description = "Secure multi-platform wallet for Silica Protocol"
+authors = ["Silica Protocol Team"]
+repository.workspace = true
+license.workspace = true
+edition.workspace = true
+
+[lib]
+name = "silica_wallet_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+# Tauri core
+tauri = { version = "2.9", features = [] }
+tauri-plugin-shell = "2.0"
+
+# Workspace dependencies
+silica-models = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+hex = { workspace = true }
+sha2 = { workspace = true }
+sha3 = { workspace = true }
+blake3 = { workspace = true }
+ed25519-dalek = { workspace = true }
+rand = { workspace = true }
+argon2 = { workspace = true }
+secrecy = { workspace = true }
+zeroize = { workspace = true }
+chrono = { workspace = true }
+ring = { workspace = true }
+parking_lot = "0.12"
+curve25519-dalek = { workspace = true }
+pqcrypto-dilithium = { workspace = true }
+pqcrypto-kyber = { workspace = true }
+pqcrypto-traits = { workspace = true }
+
+# Additional runtime utilities
+once_cell = "1.20"
+arrayvec = "0.7"
+
+# Wallet-specific dependencies
+log = "0.4"
+regex = "1.10"
+bip39 = { workspace = true }
+hmac = { workspace = true }
+uuid = { workspace = true }
+libc = { workspace = true }
+
+# HTTP client for blockchain communication
+reqwest = { workspace = true }
+tokio = { workspace = true }
+bech32 = "0.11.0"
+
+[dev-dependencies]
+tempfile = { workspace = true }

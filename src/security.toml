@@ -1,0 +1,82 @@
+# Security Configuration for Chert Wallet
+# This file defines security policies and settings
+
+[network]
+# Allowed domains for external requests
+allowed_domains = [
+    # Blockchain RPC endpoints
+    "mainnet.chert.network",
+    "testnet.chert.network",
+    
+    # Price/market data (if needed)
+    # "api.coingecko.com",
+    
+    # Update servers (if needed)
+    # "updates.chert.network"
+]
+
+# Maximum request timeout (seconds)
+request_timeout = 30
+
+# Enable certificate pinning in production
+certificate_pinning = true
+
+[storage]
+# Encryption settings
+encryption_algorithm = "ChaCha20Poly1305"
+key_derivation = "Argon2id"
+
+# Key derivation parameters
+argon2_memory = 65536  # 64MB
+argon2_iterations = 3
+argon2_parallelism = 1
+
+# Backup encryption
+backup_encryption = true
+
+[validation]
+# Input validation settings
+max_input_length = 1000
+sanitize_inputs = true
+validate_addresses = true
+validate_amounts = true
+
+# Rate limiting
+max_requests_per_minute = 60
+max_failed_attempts = 5
+lockout_duration_minutes = 15
+
+[crypto]
+# Cryptographic settings
+secure_random_source = "os"
+min_password_length = 12
+require_strong_passwords = true
+
+# Session management
+session_timeout_minutes = 30
+auto_lock_minutes = 15
+
+[logging]
+# Security logging
+log_security_events = true
+log_failed_attempts = true
+log_sensitive_operations = true
+
+# Log retention (days)
+log_retention_days = 90
+
+# Sensitive data logging (should be false in production)
+log_sensitive_data = false
+
+[features]
+# Security features toggles
+hardware_security_module = false  # Enable when HSM support is added
+biometric_auth = false            # Enable when biometric support is added
+multi_signature = true
+hierarchical_deterministic = true
+
+[development]
+# Development-only settings (ignored in production builds)
+allow_unsafe_eval = false
+allow_http = false  # Only HTTPS in production
+debug_crypto = false

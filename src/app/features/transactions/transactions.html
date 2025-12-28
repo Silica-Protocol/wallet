@@ -1,0 +1,119 @@
+<div class="transactions-view">
+  <div class="transactions-header">
+    <h2>Transaction History</h2>
+    <div class="header-actions">
+      @if (isWalletReady()) {
+        <button class="refresh-button" (click)="refresh()" [disabled]="isLoading()">
+          @if (isLoading()) {
+            <div class="spinner"></div>
+          } @else {
+            🔄
+          }
+          Refresh
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (!isWalletReady()) {
+    <div class="wallet-not-ready">
+      @if (!exists()) {
+        <p>Please create a wallet first to view transactions.</p>
+        <button class="action-button" routerLink="/wallet">Go to Wallet</button>
+      } @else if (isLocked()) {
+        <p>Please unlock your wallet to view transactions.</p>
+        <button class="action-button" routerLink="/wallet">Unlock Wallet</button>
+      }
+    </div>
+  } @else {
+    @if (loadError(); as error) {
+      <div class="error-message">
+        <p>❌ Failed to load transactions: {{ error }}</p>
+        <button class="retry-button" (click)="refresh()">Retry</button>
+      </div>
+    }
+
+    @if (hasTransactions()) {
+      <div class="transactions-list">
+        @for (tx of transactionList(); track tx.transactionId) {
+          <div class="transaction-card" [class.sent]="getTransactionType(tx) === 'sent'" [class.received]="getTransactionType(tx) === 'received'">
+            <div class="transaction-icon" [style.color]="getTransactionColor(tx)">
+              {{ getTransactionIcon(tx) }}
+            </div>
+
+            <div class="transaction-details">
+              <div class="transaction-main">
+                <div class="transaction-type">
+                  <span class="type-label">{{ getTransactionType(tx) === 'sent' ? 'Sent' : 'Received' }}</span>
+                  <span class="status-chip" [style.background-color]="getStatusColor(tx.status)">
+                    {{ tx.status }}
+                  </span>
+                </div>
+                <div class="transaction-amount" [style.color]="getTransactionColor(tx)">
+                  {{ getTransactionType(tx) === 'sent' ? '-' : '+' }}{{ formatAmount(tx.amount) }} CHERT
+                </div>
+              </div>
+
+              <div class="transaction-meta">
+                <div class="address-info">
+                  @if (getTransactionType(tx) === 'sent') {
+                    <span class="label">To:</span>
+                    <span class="address" [title]="tx.toAddress">{{ formatAddress(tx.toAddress) }}</span>
+                  } @else {
+                    <span class="label">From:</span>
+                    <span class="address" [title]="tx.fromAddress">{{ formatAddress(tx.fromAddress) }}</span>
+                  }
+                </div>
+                <div class="transaction-time">
+                  {{ tx.timestamp | date: 'short' }}
+                </div>
+              </div>
+
+              <div class="transaction-footer">
+                <div class="tx-id">
+                  <span class="label">TX ID:</span>
+                  <span class="id-value" [title]="tx.transactionId">{{ formatAddress(tx.transactionId) }}</span>
+                  <button class="copy-button" (click)="copyTxId(tx.transactionId)" title="Copy Transaction ID">📋</button>
+                </div>
+                @if (tx.blockHeight) {
+                  <div class="block-info">
+                    <span class="label">Block:</span>
+                    <span class="block-height">{{ tx.blockHeight }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (canLoadMore()) {
+        <div class="load-more">
+          <button class="load-more-button" (click)="loadMore()" [disabled]="isLoading()">
+            @if (isLoading()) {
+              <div class="spinner"></div>
+              Loading...
+            } @else {
+              Load More Transactions
+            }
+          </button>
+        </div>
+      }
+    } @else if (!isLoading()) {
+      <div class="no-transactions">
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <h3>No transactions yet</h3>
+          <p>Your transaction history will appear here once you start sending or receiving CHERT tokens.</p>
+        </div>
+      </div>
+    }
+
+    @if (isLoading() && !hasTransactions()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading transactions...</p>
+      </div>
+    }
+  }
+</div>

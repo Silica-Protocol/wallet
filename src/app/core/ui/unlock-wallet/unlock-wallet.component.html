@@ -1,0 +1,35 @@
+<section class="unlock-card form-section animate-fade-in">
+  <h3>Unlock Wallet</h3>
+  <p class="muted">Remaining attempts: {{ remainingAttempts }} / {{ maxAttempts }}</p>
+
+  <form [formGroup]="unlockForm" (ngSubmit)="submit()" novalidate>
+    <label>
+      <span>Password</span>
+      <input
+        type="password"
+        formControlName="password"
+        autocomplete="current-password"
+        [class.invalid]="unlockForm.controls.password.invalid && unlockForm.controls.password.touched"
+        [disabled]="disableForm"
+        (blur)="unlockForm.controls.password.markAsTouched()"
+      />
+    </label>
+
+    @if (lastError()) {
+      <div class="error-banner">{{ lastError() }}</div>
+    }
+
+    @if (isLockedOut()) {
+      <div class="lockout-notice">
+        Too many attempts. Please wait {{ lockoutSeconds() }} seconds before trying again.
+      </div>
+    }
+
+  <button class="primary" type="submit" [disabled]="disableForm">
+      @if (loading()) {
+        <span class="loading-indicator"></span>
+      }
+      <span>{{ loading() ? 'Unlocking…' : 'Unlock' }}</span>
+    </button>
+  </form>
+</section>

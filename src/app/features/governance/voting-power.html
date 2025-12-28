@@ -1,0 +1,188 @@
+<div class="voting-power">
+  <!-- Header -->
+  <div class="power-header">
+    <h3>Your Voting Power</h3>
+    <button class="refresh-btn" (click)="refresh()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔄</span>
+      <span *ngIf="isLoading">⏳</span>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Address Input -->
+  <form [formGroup]="addressForm" (ngSubmit)="applyAddress()" class="address-form">
+    <div class="form-row">
+      <label for="governanceAddress">Your address</label>
+      <input
+        type="text"
+        id="governanceAddress"
+        formControlName="address"
+        placeholder="chert_address..."
+        [class.error]="addressForm.get('address')?.invalid && addressForm.get('address')?.touched">
+      <button type="submit" class="apply-btn">Apply</button>
+    </div>
+    <div class="error-message" *ngIf="addressForm.get('address')?.invalid && addressForm.get('address')?.touched">
+      Please enter a valid Chert address.
+    </div>
+  </form>
+
+  <!-- Tab Navigation -->
+  <div class="tab-navigation">
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'overview'"
+      (click)="selectTab('overview')">
+      Overview
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="selectedTab === 'delegations'"
+      (click)="selectTab('delegations')">
+      Delegations ({{ delegations.length }})
+    </button>
+  </div>
+
+  <!-- Overview Tab -->
+  <div *ngIf="selectedTab === 'overview'" class="tab-content">
+    <!-- Voting Power Cards -->
+    <div class="power-cards" *ngIf="votingPower">
+      <div class="power-card">
+        <div class="card-icon">💪</div>
+        <div class="card-content">
+          <h4>Direct Voting Power</h4>
+          <div class="power-value">{{ votingPower.voting_power.toLocaleString() }}</div>
+          <p class="power-desc">From your token holdings</p>
+        </div>
+      </div>
+
+      <div class="power-card">
+        <div class="card-icon">🤝</div>
+        <div class="card-content">
+          <h4>Delegated Power</h4>
+          <div class="power-value">{{ votingPower.delegated_power.toLocaleString() }}</div>
+          <p class="power-desc">Power delegated to you</p>
+        </div>
+      </div>
+
+      <div class="power-card total">
+        <div class="card-icon">⚡</div>
+        <div class="card-content">
+          <h4>Total Voting Power</h4>
+          <div class="power-value total">{{ votingPower.total_power.toLocaleString() }}</div>
+          <p class="power-desc">Combined voting power</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delegation Form -->
+    <div class="delegation-section">
+      <h4>Delegate Voting Power</h4>
+      <p class="delegation-info">
+        Available to delegate: {{ getAvailablePower().toLocaleString() }}
+      </p>
+
+      <form [formGroup]="delegateForm" (ngSubmit)="delegate()" class="delegate-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="delegator">From Address:</label>
+            <input
+              type="text"
+              id="delegator"
+              formControlName="delegator"
+              placeholder="chert_address..."
+              [class.error]="delegateForm.get('delegator')?.invalid && delegateForm.get('delegator')?.touched">
+            <div class="error-message" *ngIf="delegateForm.get('delegator')?.invalid && delegateForm.get('delegator')?.touched">
+              Please enter a valid Chert address.
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="validator">Delegate To:</label>
+            <input
+              type="text"
+              id="validator"
+              formControlName="validator"
+              placeholder="chert_address..."
+              [class.error]="delegateForm.get('validator')?.invalid && delegateForm.get('validator')?.touched">
+            <div class="error-message" *ngIf="delegateForm.get('validator')?.invalid && delegateForm.get('validator')?.touched">
+              Please enter a valid Chert address
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="amount">Amount:</label>
+            <input
+              type="number"
+              id="amount"
+              formControlName="amount"
+              placeholder="0"
+              min="1"
+              [max]="getAvailablePower()"
+              [class.error]="delegateForm.get('amount')?.invalid && delegateForm.get('amount')?.touched">
+            <div class="error-message" *ngIf="delegateForm.get('amount')?.invalid && delegateForm.get('amount')?.touched">
+              Please enter a valid amount
+            </div>
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="delegate-btn"
+          [disabled]="delegateForm.invalid || isLoading || getAvailablePower() === 0">
+          <span *ngIf="!isLoading">Delegate Power</span>
+          <span *ngIf="isLoading">Delegating...</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- No Voting Power -->
+    <div class="no-power" *ngIf="!votingPower || votingPower.total_power === 0">
+      <div class="no-power-icon">⚠️</div>
+      <h4>No Voting Power</h4>
+      <p>You need CHERT tokens to participate in governance.</p>
+      <p>Acquire tokens through staking, trading, or other means to gain voting power.</p>
+    </div>
+  </div>
+
+  <!-- Delegations Tab -->
+  <div *ngIf="selectedTab === 'delegations'" class="tab-content">
+    <div class="delegations-header">
+      <h4>Your Delegations</h4>
+      <p class="delegations-summary">
+        Total delegated: {{ getTotalDelegated().toLocaleString() }}
+      </p>
+    </div>
+
+    <!-- Delegations List -->
+    <div class="delegations-list" *ngIf="delegations.length > 0">
+      <div *ngFor="let delegation of delegations" class="delegation-item">
+        <div class="delegation-header">
+          <span class="delegatee">{{ truncateAddress(delegation.validator) }}</span>
+          <span class="delegation-amount">{{ delegation.amount.toLocaleString() }}</span>
+        </div>
+        <div class="delegation-meta">
+          <span class="delegation-date">{{ formatTimestamp(delegation.delegated_at) }}</span>
+          <span class="delegation-shares">Shares: {{ delegation.shares.toLocaleString() }}</span>
+          <span class="delegation-rewards">Rewards claimed: {{ delegation.rewards_claimed.toLocaleString() }}</span>
+          <button class="undelegate-btn" (click)="undelegate(delegation)">
+            Undelegate
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- No Delegations -->
+    <div class="no-delegations" *ngIf="delegations.length === 0">
+      <div class="no-delegations-icon">🤝</div>
+      <h4>No Active Delegations</h4>
+      <p>You haven't delegated any voting power yet.</p>
+      <p>Delegate your voting power to trusted community members or organizations.</p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Loading voting power...</p>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+{
+  "name": "@chert/chert-wallet-wasm",
+  "type": "module",
+  "collaborators": [
+    "Chert Development Team"
+  ],
+  "description": "Chert Wallet WebAssembly modules for high-performance blockchain operations",
+  "version": "0.1.0",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dedme/chert"
+  },
+  "files": [
+    "chert_wallet_wasm_bg.wasm",
+    "chert_wallet_wasm.js",
+    "chert_wallet_wasm.d.ts"
+  ],
+  "main": "chert_wallet_wasm.js",
+  "types": "chert_wallet_wasm.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}

@@ -1,0 +1,225 @@
+<div class="settings-container">
+  <div class="settings-header">
+    <h2>Wallet Settings</h2>
+    <p>Configure security and notification preferences</p>
+  </div>
+
+  <!-- Biometric Authentication Section -->
+  <div class="settings-section">
+    <h3>🔐 Biometric Authentication</h3>
+    <div class="setting-group">
+      @if (loadingBiometric()) {
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading biometric settings...</p>
+        </div>
+      } @else if (biometricStatus(); as status) {
+        <div class="biometric-status">
+          <div class="status-info">
+            <span class="status-icon" [class.available]="status.available">
+              {{ status.available ? '✅' : '❌' }}
+            </span>
+            <div class="status-details">
+              <h4>{{ getBiometricTypeText() }} Authentication</h4>
+              <p *ngIf="status.available">
+                Available on this device
+                <span *ngIf="status.enrolled" class="enrolled-badge">Enrolled</span>
+              </p>
+              <p *ngIf="!status.available" class="unavailable-text">
+                Not available on this device
+              </p>
+            </div>
+          </div>
+
+          @if (status.available) {
+            <div class="biometric-controls">
+              <div class="toggle-setting">
+                <label class="toggle-label">
+                  <input
+                    type="checkbox"
+                    [checked]="biometricEnabled()"
+                    (change)="toggleBiometric()"
+                    class="toggle-input">
+                  <span class="toggle-slider"></span>
+                  Enable {{ getBiometricTypeText() }}
+                </label>
+                <button
+                  class="test-button"
+                  (click)="testBiometric()"
+                  [disabled]="testingBiometric()"
+                  *ngIf="biometricEnabled()">
+                  @if (testingBiometric()) {
+                    <div class="spinner small"></div>
+                  } @else {
+                    Test
+                  }
+                </button>
+              </div>
+
+              <div class="toggle-setting">
+                <label class="toggle-label">
+                  <input
+                    type="checkbox"
+                    [checked]="passkeyEnabled()"
+                    (change)="togglePasskey()"
+                    class="toggle-input">
+                  <span class="toggle-slider"></span>
+                  Enable Passkeys (WebAuthn)
+                </label>
+                <small class="setting-description">
+                  Use hardware security keys or platform authenticators for enhanced security
+                </small>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="error-message">
+          Unable to load biometric settings. Please refresh the page.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Push Notifications Section -->
+  <div class="settings-section">
+    <h3>🔔 Push Notifications</h3>
+    <div class="setting-group">
+      @if (loadingPush()) {
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Loading notification settings...</p>
+        </div>
+      } @else if (pushStatus(); as status) {
+        <div class="push-status">
+          <div class="status-info">
+            <span class="status-icon" [class.available]="status.available">
+              {{ status.available ? '✅' : '❌' }}
+            </span>
+            <div class="status-details">
+              <h4>Push Notifications</h4>
+              <p *ngIf="status.available">
+                Available on this device
+                <span *ngIf="status.enabled" class="enabled-badge">Enabled</span>
+                <span *ngIf="!status.permissionGranted" class="permission-badge">Permission Required</span>
+              </p>
+              <p *ngIf="!status.available" class="unavailable-text">
+                Not supported on this browser/platform
+              </p>
+            </div>
+          </div>
+
+          @if (status.available) {
+            <div class="push-controls">
+              <div class="toggle-setting">
+                <label class="toggle-label">
+                  <input
+                    type="checkbox"
+                    [checked]="status.enabled"
+                    (change)="togglePushNotifications()"
+                    class="toggle-input">
+                  <span class="toggle-slider"></span>
+                  Enable Push Notifications
+                </label>
+              </div>
+
+              @if (status.enabled) {
+                <div class="notification-preferences">
+                  <h5>Alert Preferences</h5>
+
+                  <div class="preference-item">
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        [checked]="transactionAlerts()"
+                        (change)="transactionAlerts.set(!transactionAlerts()); updatePushPreferences()"
+                        class="checkbox-input">
+                      <span class="checkmark"></span>
+                      Transaction Alerts
+                    </label>
+                    <small>Get notified about incoming and outgoing transactions</small>
+                  </div>
+
+                  <div class="preference-item">
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        [checked]="stakingAlerts()"
+                        (change)="stakingAlerts.set(!stakingAlerts()); updatePushPreferences()"
+                        class="checkbox-input">
+                      <span class="checkmark"></span>
+                      Staking Alerts
+                    </label>
+                    <small>Get notified about staking rewards and delegation changes</small>
+                  </div>
+
+                  <div class="preference-item">
+                    <label class="checkbox-label">
+                      <input
+                        type="checkbox"
+                        [checked]="governanceAlerts()"
+                        (change)="governanceAlerts.set(!governanceAlerts()); updatePushPreferences()"
+                        class="checkbox-input">
+                      <span class="checkmark"></span>
+                      Governance Alerts
+                    </label>
+                    <small>Get notified about new proposals and voting deadlines</small>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      } @else {
+        <div class="error-message">
+          Unable to load notification settings. Please refresh the page.
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Security Information -->
+  <div class="settings-section">
+    <h3>🔒 Security Information</h3>
+    <div class="info-cards">
+      <div class="info-card">
+        <h4>Biometric Authentication</h4>
+        <p>
+          Biometric authentication provides an additional layer of security by requiring
+          your fingerprint, face, or device PIN to access your wallet.
+        </p>
+        <ul>
+          <li>More secure than passwords alone</li>
+          <li>Convenient and fast authentication</li>
+          <li>Platform-specific security features</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h4>Passkeys (WebAuthn)</h4>
+        <p>
+          Passkeys are a modern, passwordless authentication method that uses
+          public-key cryptography for enhanced security.
+        </p>
+        <ul>
+          <li>Resistant to phishing attacks</li>
+          <li>Works across devices</li>
+          <li>No passwords to remember or manage</li>
+        </ul>
+      </div>
+
+      <div class="info-card">
+        <h4>Push Notifications</h4>
+        <p>
+          Stay informed about important wallet activities and blockchain events
+          with customizable push notifications.
+        </p>
+        <ul>
+          <li>Real-time transaction alerts</li>
+          <li>Staking reward notifications</li>
+          <li>Governance proposal updates</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

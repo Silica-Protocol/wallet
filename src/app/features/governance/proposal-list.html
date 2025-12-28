@@ -1,0 +1,134 @@
+<div class="proposal-list">
+  <div class="header">
+    <h3>Governance Proposals</h3>
+    <button class="refresh-btn" (click)="refresh()" [disabled]="isLoading">
+      <span *ngIf="!isLoading">🔄</span>
+      <span *ngIf="isLoading">⏳</span>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters">
+    <form [formGroup]="filterForm" class="filter-form">
+       <div class="filter-group">
+         <label for="state-select">State:</label>
+         <select id="state-select" formControlName="state">
+          <option value="">All States</option>
+          <option value="pending">Pending</option>
+          <option value="active">Active</option>
+          <option value="succeeded">Succeeded</option>
+          <option value="defeated">Defeated</option>
+          <option value="queued">Queued</option>
+          <option value="executed">Executed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="vetoed">Vetoed</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
+
+       <div class="filter-group">
+         <label for="proposer-input">Proposer:</label>
+         <input id="proposer-input" type="text" formControlName="proposer" placeholder="Filter by proposer address">
+       </div>
+
+       <div class="filter-group">
+         <label for="search-input">Search:</label>
+         <input id="search-input" type="text" formControlName="search" placeholder="Search in description">
+       </div>
+    </form>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading proposals...</p>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && filteredProposals.length === 0" class="empty-state">
+    <div class="empty-icon">📋</div>
+    <h4>No proposals found</h4>
+    <p *ngIf="proposals.length === 0">No governance proposals have been created yet.</p>
+    <p *ngIf="proposals.length > 0 && filteredProposals.length === 0">No proposals match your current filters.</p>
+  </div>
+
+  <!-- Proposals List -->
+  <div *ngIf="!isLoading && filteredProposals.length > 0" class="proposals-grid">
+    <div
+      *ngFor="let proposal of filteredProposals"
+      class="proposal-card"
+      [class.selected]="selectedProposal?.proposal_id === proposal.proposal_id"
+      (click)="selectProposal(proposal)"
+      (keydown.enter)="selectProposal(proposal)"
+      (keydown.space)="selectProposal(proposal)"
+      tabindex="0"
+      role="button"
+      [attr.aria-label]="'Select proposal ' + proposal.proposal_id"
+    >
+      <div class="card-header">
+        <div class="proposal-id">#{{ proposal.proposal_id }}</div>
+        <div class="state-badge" [ngClass]="getStateBadgeClass(proposal.state)">
+          {{ proposal.state }}
+        </div>
+      </div>
+
+      <div class="card-content">
+        <h4 class="proposal-title">{{ truncateDescription(proposal.description, 80) }}</h4>
+
+        <div class="proposal-meta">
+          <div class="meta-item">
+            <span class="label">Proposer:</span>
+            <span class="value">{{ truncateAddress(proposal.proposer) }}</span>
+          </div>
+
+          <div class="meta-item">
+            <span class="label">Status:</span>
+            <span class="value">{{ getTimeRemaining(proposal) }}</span>
+          </div>
+        </div>
+
+        <!-- Voting Progress -->
+        <div *ngIf="isProposalActive(proposal)" class="voting-progress">
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getSupportPercentage(proposal)"></div>
+          </div>
+          <div class="progress-labels">
+            <span>For: {{ proposal.votes_for.toLocaleString() }}</span>
+            <span>Against: {{ proposal.votes_against.toLocaleString() }}</span>
+            <span>Abstain: {{ proposal.votes_abstain.toLocaleString() }}</span>
+          </div>
+        </div>
+
+        <!-- Quorum Progress -->
+        <div *ngIf="isProposalActive(proposal)" class="quorum-progress">
+          <div class="quorum-bar">
+            <div class="quorum-fill" [style.width.%]="getQuorumProgress(proposal)"></div>
+          </div>
+          <div class="quorum-label">
+            Quorum: {{ getQuorumProgress(proposal).toFixed(1) }}%
+          </div>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="view-btn" (click)="selectProposal(proposal)">
+          View Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Proposal Details (could be expanded later) -->
+  <div *ngIf="selectedProposal" class="selected-proposal">
+    <div class="selected-header">
+      <h4>Proposal #{{ selectedProposal.proposal_id }}</h4>
+      <button class="close-btn" (click)="clearSelection()">✕</button>
+    </div>
+    <p>{{ selectedProposal.description }}</p>
+    <div class="selected-meta">
+      <span>Proposer: {{ selectedProposal.proposer }}</span>
+      <span>State: {{ selectedProposal.state }}</span>
+    </div>
+  </div>
+</div>

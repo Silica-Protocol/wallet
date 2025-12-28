@@ -1,0 +1,300 @@
+<div class="staking-view">
+  <div class="section-header">
+    <h2>Staking & Validators</h2>
+    <p>Stake your CHERT tokens with validators to earn rewards and participate in network consensus.</p>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-nav tab-nav-center">
+    <button class="tab-btn" [class.active]="selectedTab === 'overview'" (click)="selectTab('overview')">Overview</button>
+    <button class="tab-btn" [class.active]="selectedTab === 'validators'" (click)="selectTab('validators')">Validators</button>
+    <button class="tab-btn" [class.active]="selectedTab === 'delegations'" (click)="selectTab('delegations')">My Delegations</button>
+    <button class="tab-btn" [class.active]="selectedTab === 'rewards'" (click)="selectTab('rewards')">Rewards</button>
+  </div>
+
+  <!-- Loading State -->
+  @if (isLoading) {
+    <div class="text-center p-2xl">
+      <div class="spinner spinner-lg mx-auto mb-md"></div>
+      <p class="text-tertiary">Loading staking data...</p>
+    </div>
+  }
+
+  <!-- Overview Tab -->
+  <div *ngIf="selectedTab === 'overview' && !isLoading" class="tab-content">
+    <div class="overview-grid">
+      <!-- Staking Summary -->
+      <div class="card">
+        <h3 class="mb-md">Staking Summary</h3>
+        <div class="stat-grid cols-2">
+          <div class="stat-item">
+            <span class="stat-label">Total Staked</span>
+            <span class="stat-value">{{ getTotalStaked() }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Active Delegations</span>
+            <span class="stat-value">{{ userDelegations.length }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Lockbox Stakes</span>
+            <span class="stat-value">{{ lockboxRecords.length }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Auto-Staking</span>
+            <span class="stat-value">{{ autoStakeStatus?.isActive ? 'Enabled' : 'Disabled' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card">
+        <h3 class="mb-md">Quick Actions</h3>
+        <div class="flex flex-col gap-sm">
+          <button class="btn btn-primary btn-block" (click)="selectTab('validators')">
+            Delegate to Validator
+          </button>
+          <button class="btn btn-ghost btn-block" (click)="selectTab('rewards')">
+            Claim Rewards
+          </button>
+          <button class="btn btn-ghost btn-block" (click)="toggleAutoStaking()">
+            {{ autoStakeStatus?.isActive ? 'Disable' : 'Enable' }} Auto-Staking
+          </button>
+        </div>
+      </div>
+
+      <!-- Lockbox Staking -->
+      <div class="card">
+        <h3 class="mb-xs">Lockbox Term Staking</h3>
+        <p class="text-tertiary text-sm mb-lg">Earn boosted rewards by locking tokens for fixed terms</p>
+
+        <form [formGroup]="lockboxForm" (ngSubmit)="createLockboxStake()" class="lockbox-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="amount-input">Amount (CHERT)</label>
+              <input class="form-input" id="amount-input" type="number" formControlName="amount" placeholder="1000" min="100">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="term-select">Lock Term</label>
+              <select class="form-select" id="term-select" formControlName="termMonths">
+                <option value="1">1 Month (5% APY)</option>
+                <option value="3">3 Months (15% APY)</option>
+                <option value="6">6 Months (30% APY)</option>
+                <option value="12">12 Months (60% APY)</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-success btn-block" [disabled]="lockboxForm.invalid">
+            Create Lockbox Stake
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Validators Tab -->
+  <div *ngIf="selectedTab === 'validators' && !isLoading" class="tab-content">
+    <div class="section-header">
+      <h3>Available Validators</h3>
+      <p>Choose a validator to delegate your tokens and earn rewards</p>
+    </div>
+
+    <div class="grid gap-md validator-grid">
+      <div class="card" *ngFor="let validator of validators">
+        <div class="flex justify-between items-start mb-md">
+          <div>
+            <h4 class="mb-xs">{{ truncateAddress(validator.address) }}</h4>
+            <span class="badge" [class.badge-success]="validator.isActive" [class.badge-warning]="!validator.isActive">
+              {{ validator.isActive ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <span class="text-warning">⭐ {{ validator.reputationScore }}</span>
+        </div>
+
+        <div class="stat-grid cols-4">
+           <div class="stat-item">
+             <span class="stat-label">Total Stake</span>
+             <span class="stat-value">{{ formatAmount(validator.stake) }}</span>
+           </div>
+           <div class="stat-item">
+             <span class="stat-label">Commission</span>
+             <span class="stat-value">{{ validator.commissionRate }}%</span>
+           </div>
+           <div class="stat-item">
+             <span class="stat-label">Delegators</span>
+             <span class="stat-value">{{ validator.delegatorCount || 0 }}</span>
+           </div>
+          <div class="stat-item">
+            <span class="stat-label">APY</span>
+            <span class="stat-value">{{ getEstimatedAPY(validator) }}%</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary btn-sm" (click)="openDelegateModal(validator)">
+          Delegate
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delegations Tab -->
+  <div *ngIf="selectedTab === 'delegations' && !isLoading" class="tab-content">
+    <div class="section-header">
+      <h3>My Delegations</h3>
+      <p>Manage your active delegations and staking positions</p>
+    </div>
+
+    <div class="delegations-list" *ngIf="userDelegations.length > 0; else noDelegations">
+      <div class="card" *ngFor="let delegation of userDelegations">
+        <div class="flex justify-between items-start mb-sm">
+          <div>
+            <h4 class="mb-xs">Validator: {{ truncateAddress(delegation.validator) }}</h4>
+            <p class="text-tertiary text-sm">Delegated: {{ delegation.delegatedAt | date:'short' }}</p>
+          </div>
+          <span class="text-xl font-semibold">{{ formatAmount(delegation.amount) }}</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-tertiary">Rewards Claimed: {{ formatAmount(delegation.rewardsClaimed) }}</span>
+          <button class="btn btn-danger btn-sm" (click)="undelegate(delegation, delegation.amount)">
+            Undelegate All
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noDelegations>
+      <div class="empty-state">
+        <div class="empty-icon">🏦</div>
+        <h4>No Active Delegations</h4>
+        <p>You haven't delegated any tokens yet. Start earning rewards by delegating to a validator.</p>
+        <button class="btn btn-primary" (click)="selectTab('validators')">
+          Browse Validators
+        </button>
+      </div>
+    </ng-template>
+
+    <!-- Lockbox Records -->
+    <div class="lockbox-section mt-xl" *ngIf="lockboxRecords.length > 0">
+      <h4 class="mb-md">Lockbox Stakes</h4>
+      <div class="grid gap-md">
+        <div class="card" *ngFor="let record of lockboxRecords">
+          <div class="flex justify-between items-start mb-md">
+            <div>
+              <div class="text-xl font-semibold">{{ formatAmount(record.amount) }}</div>
+              <div class="text-tertiary">{{ record.termMonths }} Months ({{ getTermAPY(record.termMonths) }}% APY)</div>
+            </div>
+            <span class="badge" [class.badge-success]="record.isActive" [class.badge-info]="!record.isActive">
+              {{ record.isActive ? 'Active' : 'Matured' }}
+            </span>
+          </div>
+          <div class="progress-bar mb-xs">
+            <div class="progress-fill" [style.width.%]="getLockboxProgress(record)"></div>
+          </div>
+          <span class="text-sm text-tertiary">Unlocks: {{ record.unlockAt | date:'short' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rewards Tab -->
+  <div *ngIf="selectedTab === 'rewards' && !isLoading" class="tab-content">
+    <div class="section-header">
+      <h3>Staking Rewards</h3>
+      <p>Track your staking rewards and claim earnings</p>
+    </div>
+
+    <div class="stat-grid cols-3 mb-lg">
+      <div class="card text-center">
+        <div class="text-3xl mb-sm">💰</div>
+        <h4 class="text-tertiary text-sm mb-xs">Total Earned</h4>
+        <div class="text-xl font-semibold">{{ formatAmount(stakingRewards.totalEarned) }}</div>
+      </div>
+
+      <div class="card text-center">
+        <div class="text-3xl mb-sm">⏳</div>
+        <h4 class="text-tertiary text-sm mb-xs">Pending Rewards</h4>
+        <div class="text-xl font-semibold text-success">{{ formatAmount(stakingRewards.pendingRewards) }}</div>
+      </div>
+
+      <div class="card text-center">
+        <div class="text-3xl mb-sm">📈</div>
+        <h4 class="text-tertiary text-sm mb-xs">Current APY</h4>
+        <div class="text-xl font-semibold">{{ stakingRewards.currentAPY }}%</div>
+      </div>
+    </div>
+
+    <div class="text-center mb-xl">
+      <button
+        class="btn btn-success btn-lg"
+        [disabled]="stakingRewards.pendingRewards === 0"
+        (click)="claimRewards()">
+        Claim {{ formatAmount(stakingRewards.pendingRewards) }} Rewards
+      </button>
+    </div>
+
+    <!-- Auto-Staking Status -->
+    <div class="card">
+      <h4 class="mb-md">Auto-Staking</h4>
+      <div *ngIf="autoStakeStatus; else noAutoStaking">
+        <div class="flex items-center gap-sm mb-md">
+          <span class="badge badge-success">✓ Enabled</span>
+          <span class="text-tertiary">Next Maturity: {{ autoStakeStatus.maturityTimestamp | date:'short' }}</span>
+        </div>
+        <p class="text-tertiary mb-md">Available Balance: {{ formatAmount(autoStakeStatus.balance) }}</p>
+        <button class="btn btn-danger btn-sm" (click)="toggleAutoStaking()">
+          Disable Auto-Staking
+        </button>
+      </div>
+
+      <ng-template #noAutoStaking>
+        <p class="text-tertiary mb-md">Enable auto-staking to automatically reinvest your rewards and compound earnings.</p>
+        <button class="btn btn-success btn-sm" (click)="toggleAutoStaking()">
+          Enable Auto-Staking
+        </button>
+      </ng-template>
+    </div>
+  </div>
+
+  <!-- Delegate Modal -->
+  <div *ngIf="selectedValidator" class="modal-backdrop" (click)="closeDelegateModal()" (keydown.escape)="closeDelegateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>Delegate to {{ truncateAddress(selectedValidator.address) }}</h3>
+        <button class="btn-icon" (click)="closeDelegateModal()" aria-label="Close">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="stat-grid cols-3 mb-lg">
+          <div class="stat-item">
+            <span class="stat-label">Commission Rate</span>
+            <span class="stat-value">{{ selectedValidator.commissionRate }}%</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Total Stake</span>
+            <span class="stat-value">{{ formatAmount(selectedValidator.stake) }}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Reputation</span>
+            <span class="stat-value">{{ selectedValidator.reputationScore }}/100</span>
+          </div>
+        </div>
+
+        <form [formGroup]="delegateForm" (ngSubmit)="delegate()">
+          <div class="form-group">
+            <label class="form-label" for="delegate-amount">Delegation Amount (CHERT)</label>
+            <input class="form-input" id="delegate-amount" type="number" formControlName="amount" placeholder="100" min="1" required>
+            <small class="form-help">Minimum delegation: 1 CHERT</small>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-ghost" (click)="closeDelegateModal()">
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" [disabled]="delegateForm.invalid">
+              Delegate Tokens
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

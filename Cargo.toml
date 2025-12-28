@@ -1,0 +1,67 @@
+[workspace]
+resolver = "2"
+members = ["src-tauri", "src-tauri/wasm"]
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/Silica-Protocol/wallet"
+
+[workspace.dependencies]
+# Internal - Git dependencies
+silica-models = { git = "https://github.com/Silica-Protocol/protocol-core", branch = "main" }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Error handling
+anyhow = "1.0"
+
+# Time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging
+tracing = "0.1"
+
+# Cryptography
+sha2 = "0.10"
+sha3 = "0.10"
+blake3 = "1.5"
+ed25519-dalek = { version = "2.1", features = ["serde", "pkcs8"] }
+rand = { version = "0.8.4", features = ["getrandom"] }
+hex = "0.4"
+ring = "0.17"
+argon2 = "0.5"
+secrecy = "0.10.3"
+zeroize = { version = "1.7", features = ["zeroize_derive"] }
+
+# Post-quantum crypto
+pqcrypto-dilithium = "0.5"
+pqcrypto-kyber = "0.8"
+pqcrypto-traits = "0.3"
+
+# Wallet-specific
+bip39 = "2.0"
+hmac = "0.12"
+curve25519-dalek = { version = "4.1", features = ["serde", "rand_core"] }
+
+# Networking
+reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+tokio = { version = "1.40", features = ["full"] }
+
+# Utilities
+uuid = { version = "1.10", features = ["v4", "serde"] }
+libc = "0.2"
+
+# Dev
+tempfile = "3.14"
+
+[profile.release]
+lto = true
+codegen-units = 1
+opt-level = 3
+
+[profile.release.package."silica-wallet-wasm"]
+opt-level = "s"
+codegen-units = 1

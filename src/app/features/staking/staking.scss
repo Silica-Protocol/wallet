@@ -1,0 +1,62 @@
+/* Staking View - Component-specific layouts leveraging global utilities */
+/* Global utilities: .card, .btn-*, .badge-*, .stat-*, .form-*, .modal-*, .tab-*, .section-header */
+
+.staking-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-xl);
+
+  /* Tab content animation */
+  .tab-content {
+    animation: fadeIn 0.3s ease;
+  }
+
+  /* Overview Grid - 2 columns stacked layout */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-xl);
+    margin-bottom: var(--space-xl);
+  }
+
+  /* Validator Grid - card grid layout */
+  .validator-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+
+    > .card:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Lockbox form 2-column layout */
+  .lockbox-form .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    padding: var(--space-md);
+
+    .overview-grid,
+    .validator-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .lockbox-form .form-row {
+      grid-template-columns: 1fr;
+    }
+
+    .stat-grid.cols-4 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

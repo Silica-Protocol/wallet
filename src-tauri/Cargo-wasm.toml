@@ -1,0 +1,97 @@
+[package]
+name = "chert-wallet-wasm"
+version = "1.0.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-futures = "0.4"
+js-sys = "0.3"
+web-sys = { version = "0.3", features = [
+  "console",
+  "WebSocket",
+  "MessageEvent",
+  "ErrorEvent",
+  "BinaryType",
+  "Blob",
+  "FileReader",
+  "Document",
+  "Element",
+  "HtmlElement",
+  "HtmlCanvasElement",
+  "CanvasRenderingContext2d",
+  "Window",
+  "Performance"
+] }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde-wasm-bindgen = "0.6"
+
+# Workspace dependencies
+silica-models = { path = "../../silica-models" }
+anyhow = { workspace = true }
+hex = { workspace = true }
+sha2 = { workspace = true }
+sha3 = { workspace = true }
+blake3 = { workspace = true }
+ed25519-dalek = { workspace = true }
+rand = { workspace = true }
+argon2 = { workspace = true }
+secrecy = { workspace = true }
+zeroize = { workspace = true }
+
+# Post-quantum cryptography
+pqcrypto-dilithium = { workspace = true }
+pqcrypto-kyber = { workspace = true }
+pqcrypto-traits = { workspace = true }
+
+# Wallet-specific dependencies
+log = { workspace = true }
+regex = { workspace = true }
+bip39 = { workspace = true }
+hmac = { workspace = true }
+uuid = { workspace = true }
+
+# Async and networking
+tokio = { version = "1.0", features = ["sync"] }
+futures = "0.3"
+
+[dependencies.web-sys]
+version = "0.3"
+features = [
+  "console",
+  "Performance",
+  "Window",
+  "Document",
+  "Element",
+  "HtmlElement",
+  "HtmlCanvasElement",
+  "CanvasRenderingContext2d",
+  "ImageData",
+  "Uint8Array",
+  "ArrayBuffer",
+  "Blob",
+  "FileReader",
+  "WebSocket",
+  "MessageEvent",
+  "ErrorEvent",
+  "CloseEvent",
+  "BinaryType",
+  "ProgressEvent",
+  "XmlHttpRequest",
+  "Headers",
+  "Request",
+  "RequestInit",
+  "RequestMode",
+  "Response",
+  "Location",
+  "History",
+  "Url",
+  "UrlSearchParams"
+]
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-O", "--enable-simd", "--enable-bulk-memory"]

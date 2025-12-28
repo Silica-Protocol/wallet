@@ -1,0 +1,8 @@
+{
+  "build_time": "2025-11-26T08:29:01Z",
+  "git_commit": "30bd8f282d1445a40123bd0169b742d5c86b567b",
+  "git_branch": "main",
+  "rust_version": "rustc 1.90.0 (1159e78c4 2025-09-14)",
+  "wasm_pack_version": "wasm-pack 0.13.1",
+  "build_success": true
+}

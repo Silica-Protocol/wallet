@@ -1,0 +1,150 @@
+<div class="wallet-overview">
+  @if (exists()) {
+     <div class="wallet-header">
+       <h2>Wallet Overview</h2>
+       <div class="connection-status">
+         <span class="status-chip" [class.locked]="isLocked()">{{ statusText() }}</span>
+         <div class="header-actions">
+           <button class="settings-button" routerLink="/settings" title="Settings">
+             ⚙️ Settings
+           </button>
+           <button class="refresh-button" (click)="refresh()" [disabled]="busy()">
+             @if (busy()) {
+               <div class="spinner"></div>
+             } @else {
+               🔄
+             }
+             Refresh
+           </button>
+         </div>
+       </div>
+     </div>
+
+    <div class="wallet-cards">
+      <div class="balance-card">
+        <h3>Balance</h3>
+        @if (balance(); as bal) {
+          <div class="balance-amount">
+            <span class="amount">{{ formatBalance(bal.balance) }}</span>
+            <span class="currency">CHERT</span>
+          </div>
+          <div class="balance-details">
+            <div class="detail-item">
+              <span class="label">Address:</span>
+              <span class="value">{{ bal.address | slice:0:12 }}...{{ bal.address | slice:-8 }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Nonce:</span>
+              <span class="value">{{ bal.nonce }}</span>
+            </div>
+          </div>
+        } @else if (!isLocked()) {
+          <div class="balance-loading">
+            <div class="spinner"></div>
+            <p>Loading balance...</p>
+          </div>
+        } @else {
+          <p>Unlock wallet to view balance.</p>
+        }
+      </div>
+
+      <div class="summary-card">
+        <h3>Summary</h3>
+        @if (metadata(); as summary) {
+          <dl>
+            <div>
+              <dt>Name</dt>
+              <dd>{{ summary.walletName }}</dd>
+            </div>
+            <div>
+              <dt>Created</dt>
+              <dd>{{ summary.createdAt | date: 'medium' }}</dd>
+            </div>
+            <div>
+              <dt>Last Updated</dt>
+              <dd>{{ summary.updatedAt | date: 'medium' }}</dd>
+            </div>
+            <div>
+              <dt>Schema Version</dt>
+              <dd>{{ summary.schemaVersion }}</dd>
+            </div>
+          </dl>
+        } @else {
+          <p>Unlock the wallet to view details.</p>
+        }
+        <div class="attempts" *ngIf="isLocked()">
+          <small>Remaining attempts: {{ remainingAttempts() }}</small>
+        </div>
+      </div>
+
+      <div class="address-card">
+        <h3>Derived Address</h3>
+        @if (createdAddress(); as address) {
+          <div class="address-display" [title]="address">{{ address }}</div>
+          <button class="copy-button" (click)="copyAddress()" title="Copy Address">
+            📋 Copy
+          </button>
+        } @else {
+          <p>Address becomes available after creating a wallet in this session.</p>
+        }
+      </div>
+
+      <div class="network-card">
+        <h3>Configuration</h3>
+        @if (config(); as cfg) {
+          <dl>
+            <div>
+              <dt>Environment</dt>
+              <dd>{{ cfg.environment }}</dd>
+            </div>
+            <div>
+              <dt>Primary Endpoint</dt>
+              <dd>{{ cfg.network.primaryEndpoint }}</dd>
+            </div>
+            <div>
+              <dt>Auto-lock</dt>
+              <dd>{{ cfg.session.autoLockMinutes }} minutes</dd>
+            </div>
+            <div>
+              <dt>Telemetry</dt>
+              <dd>{{ cfg.telemetry.enableAnalytics ? 'Enabled' : 'Disabled' }}</dd>
+            </div>
+          </dl>
+          <small class="config-updated">Last updated {{ cfg.lastUpdated | date: 'medium' }}</small>
+        } @else {
+          <p>Configuration unavailable.</p>
+        }
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <h3>Quick Actions</h3>
+      <div class="action-grid">
+        <button class="action-button send" routerLink="/send">
+          <div class="action-icon">💸</div>
+          <div class="action-text">Send</div>
+        </button>
+        <button class="action-button receive" routerLink="/receive">
+          <div class="action-icon">📥</div>
+          <div class="action-text">Receive</div>
+        </button>
+        <button class="action-button" routerLink="/transactions">
+          <div class="action-icon">📊</div>
+          <div class="action-text">Transactions</div>
+        </button>
+        <button class="action-button" routerLink="/staking">
+          <div class="action-icon">🏦</div>
+          <div class="action-text">Staking</div>
+        </button>
+        <button class="action-button" routerLink="/governance">
+          <div class="action-icon">🗳️</div>
+          <div class="action-text">Governance</div>
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="no-wallet">
+      <p>No wallet has been created on this device yet.</p>
+    </div>
+  }
+</div>

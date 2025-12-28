@@ -1,0 +1,208 @@
+<div class="receive-transaction">
+  <div class="receive-header">
+    <h2>Receive CHERT</h2>
+    <p>Share your address to receive CHERT tokens</p>
+  </div>
+
+  @if (!isWalletReady()) {
+    <div class="wallet-not-ready">
+      @if (!exists()) {
+        <p>Please create a wallet first to receive transactions.</p>
+        <button class="action-button" routerLink="/wallet">Go to Wallet</button>
+      } @else if (isLocked()) {
+        <p>Please unlock your wallet to receive transactions.</p>
+        <button class="action-button" routerLink="/wallet">Unlock Wallet</button>
+      }
+    </div>
+  } @else {
+    <div class="receive-content">
+      <!-- Payment Request Builder -->
+      <div class="request-builder">
+        <h3>Payment Request</h3>
+        <p>Create a tokenized request your contact can scan, share, or read via NFC.</p>
+
+        <form [formGroup]="requestForm" (ngSubmit)="createPaymentRequest()" class="request-form">
+          <div class="form-grid">
+            <label class="form-field">
+              <span>Amount (CHERT)</span>
+              <input type="text" formControlName="amount" placeholder="Optional amount" />
+              @if (requestForm.controls.amount.invalid && requestForm.controls.amount.touched) {
+                <small class="error">Enter up to 9 decimal places (e.g., 1.25)</small>
+              }
+            </label>
+
+            <label class="form-field">
+              <span>Memo / Note</span>
+              <input type="text" formControlName="memo" placeholder="Optional message" maxlength="140" />
+              @if (requestForm.controls.memo.hasError('maxlength') && requestForm.controls.memo.touched) {
+                <small class="error">Memo cannot exceed 140 characters</small>
+              }
+            </label>
+
+            <label class="form-field">
+              <span>Expires (minutes)</span>
+              <input type="text" formControlName="expiryMinutes" placeholder="15" />
+              @if (requestForm.controls.expiryMinutes.invalid && requestForm.controls.expiryMinutes.touched) {
+                <small class="error">Enter a value between 1 and 10080 minutes</small>
+              }
+            </label>
+          </div>
+
+          @if (requestError(); as error) {
+            <div class="error-banner">{{ error }}</div>
+          }
+
+          <div class="request-actions">
+            <button type="submit" class="primary-button" [disabled]="isGeneratingQR()">
+              @if (isGeneratingQR()) {
+                <div class="spinner"></div>
+                Updating Request...
+              } @else {
+                🔄 Refresh Request
+              }
+            </button>
+            <div class="quick-amounts">
+              <span>Quick amounts:</span>
+              <button type="button" (click)="prefillAmount('0.5')">0.5</button>
+              <button type="button" (click)="prefillAmount('1')">1</button>
+              <button type="button" (click)="prefillAmount('5')">5</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- QR Code Section -->
+      <div class="qr-section">
+        <h3>Request QR Code</h3>
+        <p>Scan this tokenized request with another wallet to prefill details</p>
+
+        <div class="qr-container">
+          @if (isGeneratingQR()) {
+            <div class="qr-loading">
+              <div class="spinner"></div>
+              <p>Generating QR code...</p>
+            </div>
+          } @else if (qrCodeDataUrl()) {
+            <img
+              [src]="qrCodeDataUrl()"
+              alt="QR Code for payment request"
+              class="qr-code"
+            />
+          } @else {
+            <div class="qr-placeholder">
+              <div class="qr-icon">📱</div>
+              <p>QR Code will appear here</p>
+            </div>
+          }
+        </div>
+
+        <div class="qr-actions">
+          <button type="button" class="secondary-button" (click)="createPaymentRequest()" [disabled]="isGeneratingQR()">
+            @if (isGeneratingQR()) {
+              <div class="spinner"></div>
+              Generating...
+            } @else {
+              🔄 Regenerate QR
+            }
+          </button>
+          @if (supportsNfc) {
+            <button type="button" class="secondary-button" (click)="writeRequestToNfc()" [disabled]="isWritingNfc() || !currentRequest()">
+              @if (isWritingNfc()) {
+                <div class="spinner"></div>
+                Writing NFC...
+              } @else {
+                📳 Write to NFC
+              }
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Address Section -->
+      <div class="address-section">
+        <h3>Your Address</h3>
+        <p>Copy your address or share it directly</p>
+
+        <div class="address-display">
+          <div class="address-text" [title]="walletAddress()">
+            {{ truncateAddress(walletAddress()) }}
+          </div>
+          <button class="copy-button" (click)="copyAddress()" title="Copy Address">
+            📋 Copy
+          </button>
+        </div>
+
+        <div class="address-actions">
+          <button class="primary-button" (click)="shareAddress()">
+            📤 Share Address
+          </button>
+        </div>
+      </div>
+
+      <!-- Payment Links Section -->
+      <div class="payment-links-section">
+        <h3>Payment Links</h3>
+        <p>Share or copy the generated payment request. The token expires when the timer runs out.</p>
+
+        @if (currentRequest(); as request) {
+          <div class="request-metadata">
+            <div class="metadata-row">
+              <span class="label">Request Token</span>
+              <span class="value">{{ request.token }}</span>
+              <button class="copy-link-button" (click)="copyRequestToken()">📋</button>
+            </div>
+            @if (formatRequestAmount(request); as amt) {
+              <div class="metadata-row">
+                <span class="label">Amount</span>
+                <span class="value">{{ amt }} CHERT</span>
+              </div>
+            }
+            @if (request.memo) {
+              <div class="metadata-row">
+                <span class="label">Memo</span>
+                <span class="value">{{ request.memo }}</span>
+              </div>
+            }
+            <div class="metadata-row">
+              <span class="label">Expires</span>
+              <span class="value">
+                @if (request.expiresAt) {
+                  {{ request.expiresAt | date: 'short' }}
+                } @else {
+                  Never
+                }
+              </span>
+            </div>
+          </div>
+
+          <div class="link-examples">
+            <div class="link-example">
+              <div class="link-description">Payment link:</div>
+              <div class="link-text">{{ request.uri }}</div>
+              <button class="copy-link-button" (click)="copyRequestLink()">📋</button>
+            </div>
+          </div>
+
+          <div class="share-actions">
+            <button class="primary-button" (click)="sharePaymentRequest()">
+              📤 Share Payment Request
+            </button>
+          </div>
+        } @else {
+          <div class="empty-request">
+            <p>No payment request generated yet. Fill in the details above to create one.</p>
+          </div>
+        }
+      </div>
+
+      <!-- Security Notice -->
+      <div class="security-notice">
+        <div class="notice-icon">🛡️</div>
+        <div class="notice-content">
+          <h4>Security Reminder</h4>
+          <p>Only share your address with trusted parties. Never share your private keys or seed phrase.</p>
+        </div>
+      </div>
+    </div>
+  }
+</div>

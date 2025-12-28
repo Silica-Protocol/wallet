@@ -1,0 +1,203 @@
+<div class="create-proposal">
+  <div class="header">
+    <h3>Create New Proposal</h3>
+    <p>Submit a governance proposal for the Chert community to vote on.</p>
+  </div>
+
+  <!-- Progress Indicator -->
+  <div class="progress-indicator">
+    <div class="step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+      <span class="step-number">1</span>
+      <span class="step-label">Basic Info</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+      <span class="step-number">2</span>
+      <span class="step-label">Actions</span>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step" [class.active]="currentStep >= 3">
+      <span class="step-number">3</span>
+      <span class="step-label">Review</span>
+    </div>
+  </div>
+
+  <form [formGroup]="proposalForm" (ngSubmit)="createProposal()">
+    <!-- Step 1: Basic Information -->
+    <div *ngIf="currentStep === 1" class="step-content">
+      <h4>Proposal Details</h4>
+
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input
+          type="text"
+          id="title"
+          formControlName="title"
+          placeholder="Brief, descriptive title for your proposal"
+          [class.error]="getFormErrors('title').length > 0">
+        <div class="error-messages">
+          <div *ngFor="let error of getFormErrors('title')" class="error-message">{{ error }}</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description *</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          rows="8"
+          placeholder="Detailed explanation of your proposal. Include rationale, expected impact, and any supporting data. Markdown formatting is supported."
+          [class.error]="getFormErrors('description').length > 0">
+        </textarea>
+        <div class="error-messages">
+          <div *ngFor="let error of getFormErrors('description')" class="error-message">{{ error }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2: Actions -->
+    <div *ngIf="currentStep === 2" class="step-content">
+      <h4>Proposed Actions</h4>
+      <p>Define what actions should be executed if this proposal passes.</p>
+
+      <div formArrayName="actions" class="actions-list">
+        <div
+          *ngFor="let action of actions.controls; let i = index"
+          [formGroupName]="i"
+          class="action-item">
+
+          <div class="action-header">
+            <h5>Action {{ i + 1 }}</h5>
+            <button
+              type="button"
+              class="remove-btn"
+              (click)="removeAction(i)"
+              *ngIf="actions.length > 1">
+              Remove
+            </button>
+          </div>
+
+          <div class="action-fields">
+            <div class="form-group">
+              <label for="target-{{i}}">Target Contract *</label>
+              <input
+                id="target-{{i}}"
+                type="text"
+                formControlName="target"
+                placeholder="chert_contract_address"
+                [class.error]="getActionErrors(i, 'target').length > 0">
+              <div class="error-messages">
+                <div *ngFor="let error of getActionErrors(i, 'target')" class="error-message">{{ error }}</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="value-{{i}}">Value (CHERT) *</label>
+              <input
+                id="value-{{i}}"
+                type="number"
+                formControlName="value"
+                placeholder="0"
+                min="0"
+                step="0.000001"
+                [class.error]="getActionErrors(i, 'value').length > 0">
+              <div class="error-messages">
+                <div *ngFor="let error of getActionErrors(i, 'value')" class="error-message">{{ error }}</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="calldata-{{i}}">Function Call Data *</label>
+              <textarea
+                id="calldata-{{i}}"
+                formControlName="calldata"
+                rows="3"
+                placeholder="Contract function call data (hex encoded)"
+                [class.error]="getActionErrors(i, 'calldata').length > 0">
+              </textarea>
+              <div class="error-messages">
+                <div *ngFor="let error of getActionErrors(i, 'calldata')" class="error-message">{{ error }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button type="button" class="add-action-btn" (click)="addAction()">
+        + Add Another Action
+      </button>
+    </div>
+
+    <!-- Step 3: Review -->
+    <div *ngIf="currentStep === 3" class="step-content">
+      <h4>Review Proposal</h4>
+
+      <div class="review-section">
+        <h5>Basic Information</h5>
+        <div class="review-item">
+          <strong>Title:</strong> {{ proposalForm.value.title }}
+        </div>
+        <div class="review-item">
+          <strong>Description:</strong>
+          <div class="description-preview">{{ proposalForm.value.description }}</div>
+        </div>
+      </div>
+
+      <div class="review-section">
+        <h5>Proposed Actions ({{ actions.length }})</h5>
+        <div *ngFor="let action of proposalForm.value.actions; let i = index" class="review-action">
+          <h6>Action {{ i + 1 }}</h6>
+          <div class="review-item">
+            <strong>Target:</strong> {{ action.target }}
+          </div>
+          <div class="review-item">
+            <strong>Value:</strong> {{ action.value }} CHERT
+          </div>
+          <div class="review-item">
+            <strong>Call Data:</strong>
+            <code>{{ action.calldata }}</code>
+          </div>
+        </div>
+      </div>
+
+      <div class="review-warning">
+        <div class="warning-icon">⚠️</div>
+        <div class="warning-content">
+          <strong>Important:</strong> Once submitted, this proposal cannot be modified.
+          Make sure all information is correct before proceeding.
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="form-navigation">
+      <button
+        type="button"
+        class="nav-btn prev-btn"
+        (click)="prevStep()"
+        *ngIf="currentStep > 1">
+        ← Previous
+      </button>
+
+      <div class="spacer"></div>
+
+      <button
+        type="button"
+        class="nav-btn next-btn"
+        (click)="nextStep()"
+        *ngIf="currentStep < 3"
+        [disabled]="!canProceedToNext()">
+        Next →
+      </button>
+
+      <button
+        type="submit"
+        class="nav-btn submit-btn"
+        *ngIf="currentStep === 3"
+        [disabled]="proposalForm.invalid || isSubmitting">
+        <span *ngIf="!isSubmitting">Submit Proposal</span>
+        <span *ngIf="isSubmitting">Submitting...</span>
+      </button>
+    </div>
+  </form>
+</div>

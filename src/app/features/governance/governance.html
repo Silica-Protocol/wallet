@@ -1,0 +1,62 @@
+<div class="governance-view">
+  <!-- Header -->
+  <div class="governance-header">
+    <div class="header-content">
+      <h2>Governance & Voting</h2>
+      <p>Participate in Chert network governance by voting on proposals.</p>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="governance-nav">
+      <button
+        class="nav-btn"
+        [class.active]="currentView === 'list'"
+        (click)="showProposalList()">
+        Proposals
+      </button>
+      <button
+        class="nav-btn"
+        [class.active]="currentView === 'voting-power'"
+        (click)="showVotingPower()">
+        Voting Power
+      </button>
+      <button
+        class="nav-btn create-btn"
+        (click)="showCreateProposal()">
+        Create Proposal
+      </button>
+    </nav>
+
+    <!-- Breadcrumb navigation -->
+    <nav class="breadcrumb" *ngIf="currentView === 'detail'">
+      <button class="breadcrumb-link" (click)="showProposalList()">
+        ← Back to Proposals
+      </button>
+      <span class="breadcrumb-separator">></span>
+      <span class="breadcrumb-current">Proposal #{{ selectedProposalId }}</span>
+    </nav>
+  </div>
+
+  <!-- Main Content -->
+  <div class="governance-content">
+    <!-- Proposal List View -->
+    <div *ngIf="currentView === 'list'">
+      <app-proposal-list (proposalSelected)="onProposalSelected($event)"></app-proposal-list>
+    </div>
+
+    <!-- Proposal Detail View -->
+    <div *ngIf="currentView === 'detail' && selectedProposalId">
+      <app-proposal-detail [proposalId]="selectedProposalId"></app-proposal-detail>
+    </div>
+
+    <!-- Voting Power View -->
+    <div *ngIf="currentView === 'voting-power'">
+      <app-voting-power></app-voting-power>
+    </div>
+
+    <!-- Create Proposal View -->
+    <div *ngIf="currentView === 'create-proposal'">
+      <app-create-proposal></app-create-proposal>
+    </div>
+  </div>
+</div>

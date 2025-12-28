@@ -1,0 +1,89 @@
+.unlock-card h3 {
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.unlock-card .muted {
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  font-size: var(--text-sm);
+}
+
+.unlock-card form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.unlock-card label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.unlock-card input {
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  transition: border var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+}
+
+.unlock-card input:focus {
+  outline: none;
+  border-color: var(--input-border-focus);
+  background: var(--input-bg-focus);
+  box-shadow: var(--focus-ring);
+}
+
+.unlock-card input.invalid {
+  border-color: rgb(239 68 68 / 0.65);
+  box-shadow: 0 0 0 3px rgb(239 68 68 / 0.20);
+}
+
+.error-banner {
+  background: rgb(239 68 68 / 0.12);
+  border: 1px solid rgb(239 68 68 / 0.35);
+  color: var(--text-primary);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+}
+
+.lockout-notice {
+  background: rgb(245 158 11 / 0.14);
+  border: 1px solid rgb(245 158 11 / 0.35);
+  color: var(--text-primary);
+  padding: var(--space-md);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-sm);
+}
+
+.primary {
+  align-self: stretch;
+}
+
+.loading-indicator {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 2px solid rgb(255 255 255 / 0.35);
+  border-top-color: rgb(255 255 255 / 0.9);
+  animation: spin 0.75s linear infinite;
+  margin-right: var(--space-sm);
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,3 @@
+# Keep WASM files in git, ignore build artifacts
+*.log
+node_modules/

@@ -1,0 +1,75 @@
+[package]
+name = "chert-wallet"
+version = "1.0.0"
+description = "Chert Coin Multi-Platform Wallet"
+authors = ["Chert Development Team"]
+repository = "https://github.com/Dedme/chert"
+license = "MIT"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2.0", features = [] }
+
+[dependencies]
+# Tauri core
+tauri = { version = "2.0" }
+tauri-plugin-shell = "2.0"
+tauri-plugin-fs = "2.0"
+tauri-plugin-http = "2.0"
+
+# Shared Chert ecosystem components
+silica-models = { path = "../../silica-models" }
+
+# Async runtime
+tokio = { workspace = true, features = ["full"] }
+
+# Serialization
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true }
+postcard = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+# Cryptography (post-quantum ready)
+ed25519-dalek = { workspace = true, features = ["rand_core"] }
+pqcrypto-dilithium = { workspace = true }
+ring = { workspace = true }
+bip39 = "2.2"
+hmac = "0.12"
+pbkdf2 = "0.12"
+aes-gcm = "0.10"
+rand = { workspace = true }
+pqcrypto-traits = { workspace = true }
+
+# Storage
+rocksdb = { workspace = true }
+dirs = "5.0"
+
+# Networking
+reqwest = { workspace = true, features = ["json", "rustls-tls"] }
+
+# Utilities
+hex = { workspace = true }
+base64 = { workspace = true }
+uuid = { workspace = true, features = ["v4", "serde"] }
+chrono = { workspace = true, features = ["serde"] }
+
+# Logging
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
+
+# Security
+secrecy = "0.8"
+subtle = "2.5"
+zeroize = "1.7"
+
+# Development dependencies
+[dev-dependencies]
+tempfile = "3.8"
+serial_test = "3.0"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
